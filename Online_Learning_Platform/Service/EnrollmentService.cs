@@ -35,11 +35,11 @@ namespace Online_Learning_Platform.Service
 
             //3. make the enrollment
             enrollment.Progress = Enums.Progress.Ongoing;
-            enrollment.EnrollmentDate = DateTime.Now;
+            enrollment.EnrollmentDate = DateTime.UtcNow;
 
             //4. in user's course list add the new course
             enrollment.User= user;
-            user?.Courses?.Add(course);
+            user.Courses.Add(course);
 
             _dbContext.Enrollments.Add(enrollment);
             _dbContext.SaveChanges();
