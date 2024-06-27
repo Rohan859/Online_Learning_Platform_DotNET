@@ -1,20 +1,50 @@
 ﻿using Online_Learning_Platform.AllDbContext;
+using Online_Learning_Platform.Model;
 
 namespace Online_Learning_Platform.Service
 {
     public class EnrollmentService
     {
-        private readonly AllTheDbContext _context;
+        private readonly AllTheDbContext _dbContext;
 
         public EnrollmentService(AllTheDbContext context)
         {
-            _context = context;
+            _dbContext = context;
         }
 
 
         public string EnrollInACourse(Guid userId,Guid courseId)
         {
+            //1. validate the user and course
+            var user = _dbContext.Users.Find(userId);
+            if (user == null)
+            {
+                throw new Exception("User not found");
+            }
 
+            var course = _dbContext.Courses.Find(courseId);
+            if (course == null)
+            {
+                throw new Exception("Course not found");
+            }
+
+
+            //2. generate new enrollmrnt id
+            var enrollment = new Enrollment();
+            enrollment.EnrollmentId = Guid.NewGuid();
+
+            //3. make the enrollment
+            enrollment.Progress = Enums.Progress.Ongoing;
+            enrollment.EnrollmentDate = DateTime.Now;
+
+            //4. in user's course list add the new course
+            enrollment.User= user;
+            user?.Courses?.Add(course);
+
+            _dbContext.Enrollments.Add(enrollment);
+            _dbContext.SaveChanges();
+
+            return $"Your enrollment is successfull, enrollment id is {enrollment.EnrollmentId}";
         }
     }
 }
