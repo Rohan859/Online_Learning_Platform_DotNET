@@ -15,8 +15,16 @@ namespace Online_Learning_Platform.Model
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
 
-        List<Instructor>? Instructors { get; set; }
 
+        public List<Instructor> Instructors { get; set; }= new List<Instructor>();
+        
+        public User? User { get; set; }
+        public Guid UserId { get; set; }
+
+        public List<Review> Reviews { get; set; } =new List<Review>();
+
+        public List<Enrollment> Enrollments { get; set; }=new List<Enrollment>();
+       
         
     }
 }

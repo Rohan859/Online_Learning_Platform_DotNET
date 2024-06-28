@@ -31,12 +31,16 @@ namespace Online_Learning_Platform.Service
                 Price=course.Price,
                 StartDate=course.StartDate,
                 EndDate=course.EndDate,
+
             };
 
             _allTheDbContext.Courses.Add(newCourse);
-            _allTheDbContext.SaveChanges();
-
+            _allTheDbContext.SaveChanges(); 
+            
+            
             return $"{newCourse.CourseName} is added";
+
+
         }
 
 

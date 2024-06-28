@@ -31,7 +31,7 @@ namespace Online_Learning_Platform.Service
             _theDbContext.Instructors.Add(newInstructor);   
             _theDbContext.SaveChanges();
 
-            return $"You have successfully registered and your id is {instructor.InstructorId}";
+            return $"You have successfully registered and your id is {newInstructor.InstructorId}";
         }
 
 

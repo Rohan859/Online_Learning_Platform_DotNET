@@ -62,5 +62,19 @@ namespace Online_Learning_Platform.Controller
 
             return Ok(res);
         }
+
+
+        [HttpGet("/getCourseListByUser")]
+        public ActionResult<List<Course>> GetCourseListForUserById([FromQuery]Guid userId)
+        {
+            var res = _userService.GetCourseListForUserById(userId);
+
+            if( res==null)
+            {
+                return NotFound("User not found in our system");
+            }
+
+            return Ok(res);
+        }
     }
 }

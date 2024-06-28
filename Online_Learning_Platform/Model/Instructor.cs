@@ -8,7 +8,6 @@ namespace Online_Learning_Platform.Model
         [Key]
         public Guid InstructorId { get; set; }
 
-        [StringLength(40)]
         public string? InstructorName { get; set; }
         public string? Email { get; set; }
         public string? MobileNo { get;set; }
@@ -16,5 +15,8 @@ namespace Online_Learning_Platform.Model
         public Expertise Expertise { get; set; }
         public decimal Salary {  get; set; }
         public string? Description {  get; set; }
+
+        public Course? Course { get; set; }
+        public Guid? CourseId { get; set; }
     }
 }

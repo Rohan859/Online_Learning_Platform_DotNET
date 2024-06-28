@@ -87,5 +87,18 @@ namespace Online_Learning_Platform.Service
 
             return "User details got successfully updated";
         }
+
+
+        public List<Course> GetCourseListForUserById(Guid userId)
+        {
+           var user = _theDbContext.Users.Find(userId);
+           if(user == null)
+            {
+                return null;
+            }
+
+            var courseList = user.Courses;
+            return courseList;
+        }
     }
 }

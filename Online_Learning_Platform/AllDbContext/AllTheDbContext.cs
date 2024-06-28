@@ -21,27 +21,61 @@ namespace Online_Learning_Platform.AllDbContext
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Instructor>()
-        .Property(ex => ex.Expertise)
-         .HasConversion<string>();
+              modelBuilder.Entity<Instructor>()
+            .Property(ex => ex.Expertise)
+             .HasConversion<string>();
 
 
             modelBuilder.Entity<Course>()
-       .Property(ex => ex.DifficultyLevel)
-        .HasConversion<string>();
+           .Property(ex => ex.DifficultyLevel)
+            .HasConversion<string>();
+
+                modelBuilder.Entity<Course>()
+           .Property(ex => ex.Category)
+            .HasConversion<string>();
+
+
+                modelBuilder.Entity<Enrollment>()
+           .Property(ex => ex.Progress)
+            .HasConversion<string>();
+
+                modelBuilder.Entity<Instructor>()
+           .Property(ex => ex.Expertise)
+            .HasConversion<string>();
+
+
+
+            modelBuilder.Entity<User>()
+                .HasMany(e => e.Courses) //one user can have many courses
+                .WithOne(e => e.User)
+                .HasForeignKey(e => e.UserId);
+
+
+           
+
+            modelBuilder.Entity<Course>() //one course can have many instructors
+                .HasMany(e => e.Instructors)
+                .WithOne(e => e.Course)
+                .HasForeignKey(e => e.CourseId);
+
+
 
             modelBuilder.Entity<Course>()
-       .Property(ex => ex.Category)
-        .HasConversion<string>();
+                .HasMany(e => e.Enrollments) //in one course there can be many enrollments
+                .WithOne(e => e.Course)
+                .HasForeignKey(e => e.CourseId);
 
 
-            modelBuilder.Entity<Enrollment>()
-       .Property(ex => ex.Progress)
-        .HasConversion<string>();
+            modelBuilder.Entity<User>()
+                .HasMany(e => e.Reviews) //one user can give many reviews
+                .WithOne(e => e.User)
+                .HasForeignKey(e => e.UserId);
 
-            modelBuilder.Entity<Instructor>()
-       .Property(ex => ex.Expertise)
-        .HasConversion<string>();
+
+            modelBuilder.Entity<Course>()
+                .HasMany(e => e.Reviews) // one course can have many reviews
+                .WithOne(e => e.Course)
+                .HasForeignKey(e => e.CourseId);
         }
     }
 }

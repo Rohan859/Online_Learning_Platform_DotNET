@@ -38,13 +38,33 @@ namespace Online_Learning_Platform.Service
             enrollment.EnrollmentDate = DateTime.UtcNow;
 
             //4. in user's course list add the new course
-            enrollment.User= user;
+            enrollment.Course.User= user;
             user.Courses.Add(course);
 
             _dbContext.Enrollments.Add(enrollment);
+            _dbContext.Users.Update(user);
+            _dbContext.Courses.Update(course);
             _dbContext.SaveChanges();
 
+            
+
             return $"Your enrollment is successfull, enrollment id is {enrollment.EnrollmentId}";
+        }
+
+
+        public string DeleteEnrollment(Guid enrollmentId)
+        {
+            var enrollment = _dbContext.Enrollments.Find(enrollmentId);
+
+            if(enrollment == null)
+            {
+                return "Not Found";
+            }
+
+            _dbContext.Enrollments.Remove(enrollment);
+            _dbContext.SaveChanges();
+
+            return "Successfully deleted the enrollment";
         }
     }
 }

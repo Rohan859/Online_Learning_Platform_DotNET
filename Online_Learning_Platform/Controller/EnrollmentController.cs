@@ -31,5 +31,18 @@ namespace Online_Learning_Platform.Controller
             }
             return BadRequest("Either your course is not exist or user is not exist in our system");
         }
+
+
+        [HttpDelete("/deleteEnrollment")]
+        public ActionResult<string> DeleteEnrollment([FromQuery]Guid enrollmentId)
+        {
+            var res = _enrollmentService.DeleteEnrollment(enrollmentId);
+
+            if(res == "Not Found")
+            {
+                return NotFound(res);
+            }
+            return Ok(res);
+        }
     }
 }
