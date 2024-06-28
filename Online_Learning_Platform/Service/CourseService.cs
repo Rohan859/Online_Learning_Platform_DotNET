@@ -21,16 +21,18 @@ namespace Online_Learning_Platform.Service
                 return "Not Possible";
             }
 
+            User user = _allTheDbContext.Users.Find(course.UserId);
+
             Course newCourse = new Course
             {
-                CourseId=Guid.NewGuid(),
-                CourseName=course.CourseName,
-                CourseDescription=course.CourseDescription,
-                Category=course.Category,
-                DifficultyLevel=course.DifficultyLevel,
-                Price=course.Price,
-                StartDate=course.StartDate,
-                EndDate=course.EndDate,
+                CourseId = Guid.NewGuid(),
+                CourseName = course.CourseName,
+                CourseDescription = course.CourseDescription,
+                Category = course.Category,
+                DifficultyLevel = course.DifficultyLevel,
+                Price = course.Price,
+                StartDate = course.StartDate,
+                EndDate = course.EndDate, 
 
             };
 
