@@ -19,7 +19,7 @@ namespace Online_Learning_Platform.Model
         public List<Instructor> Instructors { get; set; }= new List<Instructor>();
         
         public User? User { get; set; }
-        public Guid UserId { get; set; }
+        public Guid? UserId { get; set; }
 
         public List<Review> Reviews { get; set; } =new List<Review>();
 
