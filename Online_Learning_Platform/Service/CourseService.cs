@@ -21,7 +21,7 @@ namespace Online_Learning_Platform.Service
                 return "Not Possible";
             }
 
-            User user = _allTheDbContext.Users.Find(course.UserId);
+            User user = _allTheDbContext.Users.Find(course.UserId); 
 
             Course newCourse = new Course
             {

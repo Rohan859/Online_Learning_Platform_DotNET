@@ -39,13 +39,23 @@ namespace Online_Learning_Platform.Service
             enrollment.EnrollmentDate = DateTime.UtcNow;
 
             //4. in user's course list add the new course
-            enrollment.Course.User= user;
+            enrollment.Course=course;
+            enrollment.CourseId=courseId;
+
             user.Courses.Add(course);
 
+
+            //5.add the enrollments list in course
+            course.Enrollments.Add(enrollment);
+      
             _dbContext.Enrollments.Add(enrollment);
-            _dbContext.Users.Update(user);
-            _dbContext.Courses.Update(course);
             _dbContext.SaveChanges();
+
+            //_dbContext.Users.Update(user);
+            //_dbContext.SaveChanges();
+
+            //_dbContext.Update(course);
+            //_dbContext.SaveChanges();
 
             
 

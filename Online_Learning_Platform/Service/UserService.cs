@@ -1,4 +1,5 @@
-﻿using Online_Learning_Platform.AllDbContext;
+﻿using Microsoft.EntityFrameworkCore;
+using Online_Learning_Platform.AllDbContext;
 using Online_Learning_Platform.DTOs;
 using Online_Learning_Platform.Model;
 
@@ -91,14 +92,25 @@ namespace Online_Learning_Platform.Service
 
         public List<Course> GetCourseListForUserById(Guid userId)
         {
-           var user = _theDbContext.Users.Find(userId);
-           if(user == null)
-            {
-                return null;
-            }
+            //var user = _theDbContext.Users.Find(userId);
+            //if(user == null)
+            // {
+            //     return null;
+            // }
 
-            var courseList = user.Courses;
-            return courseList;
+            // var courseList = user.Courses;
+            // return courseList;
+
+            var user = _theDbContext.Users
+            .Include(u => u.Courses) // Eager load courses
+            .FirstOrDefault(u => u.UserId == userId);
+
+                if (user == null)
+                {
+                    return null; // Or handle appropriately (throw exception, return empty list, etc.)
+                }
+
+                return user.Courses.ToList();
         }
     }
 }

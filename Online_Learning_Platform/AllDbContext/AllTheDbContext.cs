@@ -51,7 +51,7 @@ namespace Online_Learning_Platform.AllDbContext
                 .HasForeignKey(e => e.UserId);
 
 
-           
+
 
             modelBuilder.Entity<Course>() //one course can have many instructors
                 .HasMany(e => e.Instructors)
@@ -76,6 +76,10 @@ namespace Online_Learning_Platform.AllDbContext
                 .HasMany(e => e.Reviews) // one course can have many reviews
                 .WithOne(e => e.Course)
                 .HasForeignKey(e => e.CourseId);
+
+
+
+
         }
     }
 }

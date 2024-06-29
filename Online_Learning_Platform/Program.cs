@@ -8,7 +8,11 @@ var builder = WebApplication.CreateBuilder(args);
 //builder.Services.AddDbContext<AllTheDbContext>(options => 
 //    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {

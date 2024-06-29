@@ -97,5 +97,31 @@ namespace Online_Learning_Platform.Service
 
             return "Instructor is deleted successfully";
         }
+
+
+        public string AssignInstructor(Guid instructorId,Guid courseId)
+        {
+            var instructor = _theDbContext.Instructors.Find (instructorId);
+            
+            if( instructor == null )
+            {
+                return "Instructor not found";
+            }
+
+            var course =  _theDbContext.Courses.Find (courseId);
+
+            if( course == null )
+            {
+                return "Course not found";
+            }
+
+            course.Instructors.Add (instructor);
+           // instructor.Course= course;
+
+           _theDbContext.Courses.Update (course);
+            _theDbContext.SaveChanges();
+
+            return $"{instructor.InstructorName} is assigned for {course.CourseName} course";
+        }
     }
 }

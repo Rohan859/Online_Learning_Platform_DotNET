@@ -49,5 +49,24 @@ namespace Online_Learning_Platform.Controller
 
             return Ok(res);
         }
+
+
+        [HttpPost("/assignInstructorByCourseId")]
+        public ActionResult<string> AssignInstructor([FromQuery]Guid instructorId,[FromQuery]Guid courseId)
+        {
+            string res = _instructorService.AssignInstructor(instructorId, courseId);
+
+            if(res== "Instructor not found")
+            {
+                return NotFound(res);
+            }
+
+            if (res == "Course not found")
+            {
+                return NotFound(res);
+            }
+
+            return Ok(res);
+        }
     }
 }
