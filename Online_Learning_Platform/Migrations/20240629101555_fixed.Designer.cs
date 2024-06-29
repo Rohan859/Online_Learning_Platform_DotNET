@@ -12,8 +12,8 @@ using Online_Learning_Platform.AllDbContext;
 namespace Online_Learning_Platform.Migrations
 {
     [DbContext(typeof(AllTheDbContext))]
-    [Migration("20240628102448_done")]
-    partial class done
+    [Migration("20240629101555_fixed")]
+    partial class @fixed
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -54,7 +54,7 @@ namespace Online_Learning_Platform.Migrations
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid?>("UserId")
                         .HasColumnType("uuid");
 
                     b.HasKey("CourseId");
@@ -176,9 +176,7 @@ namespace Online_Learning_Platform.Migrations
                 {
                     b.HasOne("Online_Learning_Platform.Model.User", "User")
                         .WithMany("Courses")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
 
                     b.Navigation("User");
                 });
