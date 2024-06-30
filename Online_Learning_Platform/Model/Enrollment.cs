@@ -9,7 +9,7 @@ namespace Online_Learning_Platform.Model
         public Guid EnrollmentId { get; set; }
         public DateTime EnrollmentDate {  get; set; }
         public Progress Progress { get; set; }
-        public Course Course { get; set; }
-        public Guid CourseId { get; set; } 
+        public Course? Course { get; set; }
+        public Guid? CourseId { get; set; } 
     }
 }

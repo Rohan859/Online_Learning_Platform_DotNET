@@ -1,4 +1,5 @@
-﻿using Online_Learning_Platform.AllDbContext;
+﻿using Microsoft.EntityFrameworkCore;
+using Online_Learning_Platform.AllDbContext;
 using Online_Learning_Platform.DTOs;
 using Online_Learning_Platform.Enums;
 using Online_Learning_Platform.Model;
@@ -122,6 +123,21 @@ namespace Online_Learning_Platform.Service
             _theDbContext.SaveChanges();
 
             return $"{instructor.InstructorName} is assigned for {course.CourseName} course";
+        }
+
+        public int GetListOfInstructorByCourseId(Guid courseId)
+        {
+            var course = _theDbContext.Courses
+                .Include(e => e.Instructors)
+                .FirstOrDefault(e => e.CourseId == courseId);
+
+
+            if (course == null )
+            {
+                throw new Exception("This course is not exist in our system");
+            }
+            return course.Instructors.Count();
+
         }
     }
 }

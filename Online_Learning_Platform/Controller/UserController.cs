@@ -76,5 +76,13 @@ namespace Online_Learning_Platform.Controller
 
             return Ok(res);
         }
+
+        [HttpGet("/countEnrollCoursesByUserId")]
+        public ActionResult<int> CountEnrollCoursesByUserId([FromQuery]Guid userId)
+        {
+            var res = _userService.CountEnrollCoursesByUserId(userId);
+
+            return Ok(res);
+        }
     }
 }

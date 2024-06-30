@@ -112,5 +112,20 @@ namespace Online_Learning_Platform.Service
 
                 return user.Courses.ToList();
         }
+
+
+        public int CountEnrollCoursesByUserId(Guid userId)
+        {
+            var user = _theDbContext.Users
+            .Include(u => u.Courses) // Eager load courses
+            .FirstOrDefault(u => u.UserId == userId);
+
+            if (user == null)
+            {
+                return 0; // Or handle appropriately (throw exception, return empty list, etc.)
+            }
+
+            return user.Courses.ToList().Count;
+        }
     }
 }

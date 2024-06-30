@@ -67,7 +67,7 @@ namespace Online_Learning_Platform.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("CourseId")
+                    b.Property<Guid?>("CourseId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("EnrollmentDate")
@@ -182,9 +182,7 @@ namespace Online_Learning_Platform.Migrations
                 {
                     b.HasOne("Online_Learning_Platform.Model.Course", "Course")
                         .WithMany("Enrollments")
-                        .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CourseId");
 
                     b.Navigation("Course");
                 });

@@ -1,4 +1,5 @@
-﻿using Online_Learning_Platform.AllDbContext;
+﻿using Microsoft.EntityFrameworkCore;
+using Online_Learning_Platform.AllDbContext;
 using Online_Learning_Platform.Enums;
 using Online_Learning_Platform.Model;
 
@@ -20,13 +21,13 @@ namespace Online_Learning_Platform.Service
             var user = _dbContext.Users.Find(userId);
             if (user == null)
             {
-                throw new Exception("User not found");
+                return "User not found";
             }
 
             var course = _dbContext.Courses.Find(courseId);
             if (course == null)
             {
-                throw new Exception("Course not found");
+                return "Course not found";
             }
 
 
@@ -47,8 +48,10 @@ namespace Online_Learning_Platform.Service
 
             //5.add the enrollments list in course
             course.Enrollments.Add(enrollment);
-      
+            
             _dbContext.Enrollments.Add(enrollment);
+            _dbContext.Courses.Update(course);
+            _dbContext.Users.Update(user);
             _dbContext.SaveChanges();
 
             //_dbContext.Users.Update(user);
@@ -63,46 +66,58 @@ namespace Online_Learning_Platform.Service
         }
 
 
-        public string UnEnroll(Guid userId, Guid courseId)
+        public string UnEnroll(Guid enrollmentId)
         {
-            //1. find the user and course
-            
-            
-            
-            
 
-            var user = _dbContext.Users.Find(userId);
-            var course = _dbContext.Courses.Find(courseId);
+            // 1. Find the enrollment from the db
+            var enrollment = _dbContext.Enrollments
+                                        .Include(e => e.Course)
+                                            .ThenInclude(c => c.User)
+                                        .FirstOrDefault(e => e.EnrollmentId == enrollmentId);
 
-            //2. validate them
-            if (user == null || course==null)
+            // 2. Validate the enrollment
+            if (enrollment == null)
             {
-                return "User or course not exist";
+                return "Enrollment not found";
             }
 
-            //3. remove the course from the user's course list
-            var courseList = user.Courses;
+            // 3. Access the course and user from the enrollment
+            var course = enrollment.Course;
 
-            foreach (var item in courseList)
+            if (course == null)
             {
-                if(item==course)
-                {
-                    courseList.Remove(item);
-                    break;
-                }
+                return "Course associated with enrollment is null";
             }
 
-            //4. put null in user in course entity
-            course.User = null;
+            var user = course.User;
 
-            //5.save changes
+            if (user == null)
+            {
+                return "User associated with course is null";
+            }
 
-            _dbContext.Users.Update(user);
-            _dbContext.Courses.Update(course);
+            try
+            {
+                // 4. Remove the course from the user's course list
+                user.Courses.Remove(course);
 
-            _dbContext.SaveChanges();
+                // 5. Update references to null
+                enrollment.Course = null;
 
-            return "Successfully Unenrolled";
+                // 6. Delete the enrollment
+                _dbContext.Enrollments.Remove(enrollment);
+
+                // 7. Save changes to the database
+                _dbContext.SaveChanges();
+
+                return "Successfully unenrolled the course";
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions, log them, or return an appropriate error message
+                return $"Error occurred: {ex.Message}";
+            }
+          
         }
 
 

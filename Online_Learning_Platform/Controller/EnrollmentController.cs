@@ -20,16 +20,32 @@ namespace Online_Learning_Platform.Controller
         [HttpPost("/enroll")]
         public ActionResult<string> EnrollInACourse([FromQuery]Guid userId, [FromQuery]Guid courseId)
         {
-            try
+            var res = _enrollmentService.EnrollInACourse(userId,courseId);
+
+            if(res == "User not found")
             {
-                string res = _enrollmentService.EnrollInACourse(userId, courseId);
-                return Ok(res);
+                return NotFound(res);
             }
-            catch (Exception e)
+
+            if (res == "Course not found")
             {
-                Console.WriteLine($"Error happened here! {e.Message}");
+                return NotFound(res);
             }
-            return BadRequest("Either your course is not exist or user is not exist in our system");
+
+            return Ok(res);
+        }
+
+        [HttpDelete("/unenroll")]
+        public ActionResult<string> UnEnroll([FromQuery]Guid enrollmentId)
+        {
+            var res = _enrollmentService.UnEnroll(enrollmentId);
+
+            if (res == "enrollment not found")
+            {
+                return NotFound(res);
+            }
+
+            return Ok(res);
         }
 
 

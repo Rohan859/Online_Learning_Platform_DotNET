@@ -120,5 +120,8 @@ namespace Online_Learning_Platform.Service
 
             return "Courser details updated successfully";
         }
+
+
+     
     }
 }
