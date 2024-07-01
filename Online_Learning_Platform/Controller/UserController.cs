@@ -85,12 +85,12 @@ namespace Online_Learning_Platform.Controller
             return Ok(res);
         }
 
-        [HttpGet("/getNoOfReviews")]
-        public ActionResult<string> GetNoOfReviews([FromQuery] Guid userId)
+        [HttpGet("/getNoOfReviewsByUserId")]
+        public ActionResult<string> GetNoOfReviewsByUserId([FromQuery] Guid userId)
         {
             try
             {
-                int noOfReviews = _userService.GetNoOfReviews(userId);
+                int noOfReviews = _userService.GetNoOfReviewsByUserId(userId);
                 return Ok($"No of reviews are : {noOfReviews}");
             }
             catch (Exception e)

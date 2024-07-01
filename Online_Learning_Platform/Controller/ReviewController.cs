@@ -42,5 +42,18 @@ namespace Online_Learning_Platform.Controller
 
             return Ok(res);
         }
+
+        [HttpDelete("/deleteReview")]
+        public ActionResult<string> DeleteReview(Guid reviewId)
+        {
+            var res = _reviewService?.DeleteReview(reviewId);
+
+            if( res == "Review is not exist in our system")
+            {
+                return NotFound(res);
+            }
+
+            return Ok(res);
+        }
     }
 }

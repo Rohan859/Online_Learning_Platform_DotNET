@@ -81,5 +81,37 @@ namespace Online_Learning_Platform.Controller
 
             return Ok(res);
         }
+
+
+        [HttpGet("/getNoOfReviewsByCourseId")]
+        public ActionResult<string> GetNoOfReviewsByCourseId([FromQuery]Guid courseId)
+        {
+           try
+            {
+                var noOfReviews = _courseService.GetNoOfReviewsByCourseId(courseId);
+                return Ok($"No of reviews are : {noOfReviews}");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("the error is "+e.Message);
+            }
+            return BadRequest("Course is not exist");
+        }
+
+        [HttpGet("/getNoOfEnrollmentsByCourseId")]
+        public ActionResult<string> GetNoOfEnrollmentsByCourseId([FromQuery]Guid courseId)
+        {
+            try
+            {
+                var noOfEnrollments = _courseService.GetNoOfEnrollmentsByCourseId(courseId);
+                return Ok($"The no of enrollments for this course are : {noOfEnrollments}");
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine("The error is "+e.Message);
+            }
+
+            return BadRequest("Course does not exist");
+        }
     }
 }

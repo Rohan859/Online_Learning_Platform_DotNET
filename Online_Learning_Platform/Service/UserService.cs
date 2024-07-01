@@ -129,7 +129,7 @@ namespace Online_Learning_Platform.Service
         }
 
 
-        public int GetNoOfReviews(Guid userId)
+        public int GetNoOfReviewsByUserId(Guid userId)
         {
             var user = _theDbContext.Users
                 .Include(u => u.Reviews)

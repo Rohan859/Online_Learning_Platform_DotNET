@@ -1,4 +1,5 @@
-﻿using Online_Learning_Platform.AllDbContext;
+﻿using Microsoft.EntityFrameworkCore;
+using Online_Learning_Platform.AllDbContext;
 using Online_Learning_Platform.DTOs;
 using Online_Learning_Platform.Model;
 
@@ -70,6 +71,42 @@ namespace Online_Learning_Platform.Service
             _theDbContext.SaveChanges();
 
             return "Review is updated successfully";
+        }
+
+
+        public string DeleteReview(Guid reviewId)
+        {
+            //first fetch the review
+            var review = _theDbContext.Reviews
+                .Include(e => e.User)
+                .Include(e => e.Course)
+                .FirstOrDefault(e =>  e.ReviewId == reviewId);
+
+            //then validate it
+            if(review==null)
+            {
+                return "Review is not exist in our system";
+            }
+
+            //find the user and course
+            var user = review.User;
+            var course = review.Course;
+
+            //remove the review from the list of reviews 
+            //course and user entity
+            user?.Reviews.Remove(review);
+            course?.Reviews.Remove(review);
+
+            //in the review entity
+            //set null in user and course
+            review.Course = null;
+            review.User = null;
+
+            //delete this review
+            _theDbContext.Reviews.Remove(review);
+            _theDbContext.SaveChanges();
+
+            return "Review is successfully deleted";
         }
 
     }

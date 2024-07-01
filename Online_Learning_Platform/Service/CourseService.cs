@@ -1,4 +1,5 @@
-﻿using Online_Learning_Platform.AllDbContext;
+﻿using Microsoft.EntityFrameworkCore;
+using Online_Learning_Platform.AllDbContext;
 using Online_Learning_Platform.DTOs;
 using Online_Learning_Platform.Enums;
 using Online_Learning_Platform.Model;
@@ -122,6 +123,34 @@ namespace Online_Learning_Platform.Service
         }
 
 
-     
+        public int GetNoOfReviewsByCourseId(Guid courseId)
+        {
+            var course = _allTheDbContext.Courses
+                .Include(e => e.Reviews)
+                .FirstOrDefault(e => e.CourseId==courseId);
+              
+
+
+            if (course == null)
+            {
+                throw new Exception("Course is not exist");
+            }
+
+            return course.Reviews.Count;
+        }
+
+        public int GetNoOfEnrollmentsByCourseId(Guid courseId)
+        {
+            var course = _allTheDbContext.Courses
+                .Include (e => e.Enrollments)
+                .FirstOrDefault(e => e.CourseId==courseId);
+
+            if(course == null)
+            {
+                throw new Exception("Course is not exist");
+            }
+
+            return course.Enrollments.Count;
+        }
     }
 }
