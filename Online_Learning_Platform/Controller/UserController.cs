@@ -84,5 +84,21 @@ namespace Online_Learning_Platform.Controller
 
             return Ok(res);
         }
+
+        [HttpGet("/getNoOfReviews")]
+        public ActionResult<string> GetNoOfReviews([FromQuery] Guid userId)
+        {
+            try
+            {
+                int noOfReviews = _userService.GetNoOfReviews(userId);
+                return Ok($"No of reviews are : {noOfReviews}");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("the error is "+e.Message);
+            }
+
+            return BadRequest("User is not exist");
+        }
     }
 }

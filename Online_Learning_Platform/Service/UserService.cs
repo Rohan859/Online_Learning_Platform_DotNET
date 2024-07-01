@@ -127,5 +127,21 @@ namespace Online_Learning_Platform.Service
 
             return user.Courses.ToList().Count;
         }
+
+
+        public int GetNoOfReviews(Guid userId)
+        {
+            var user = _theDbContext.Users
+                .Include(u => u.Reviews)
+                .FirstOrDefault (u => u.UserId == userId);
+
+
+            if(user == null)
+            {
+                throw new Exception("User is not exist");
+            }
+            
+            return user.Reviews.Count;
+        }
     }
 }

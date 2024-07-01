@@ -33,6 +33,7 @@ builder.Services.AddScoped<InstructorService>();
 builder.Services.AddScoped<CourseService>();
 builder.Services.AddScoped<EnrollmentService>();
 builder.Services.AddScoped<CourseAnalyticsService>();
+builder.Services.AddScoped<ReviewService>();
 
 
 
