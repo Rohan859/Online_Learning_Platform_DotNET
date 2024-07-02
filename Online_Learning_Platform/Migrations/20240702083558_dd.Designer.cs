@@ -12,8 +12,8 @@ using Online_Learning_Platform.AllDbContext;
 namespace Online_Learning_Platform.Migrations
 {
     [DbContext(typeof(AllTheDbContext))]
-    [Migration("20240701060217_done")]
-    partial class done
+    [Migration("20240702083558_dd")]
+    partial class dd
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -54,12 +54,7 @@ namespace Online_Learning_Platform.Migrations
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uuid");
-
                     b.HasKey("CourseId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Courses");
                 });
@@ -149,6 +144,21 @@ namespace Online_Learning_Platform.Migrations
                     b.ToTable("Reviews");
                 });
 
+            modelBuilder.Entity("Online_Learning_Platform.Model.StudentCourse", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CourseId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("UserId", "CourseId");
+
+                    b.HasIndex("CourseId");
+
+                    b.ToTable("StudentCourses");
+                });
+
             modelBuilder.Entity("Online_Learning_Platform.Model.User", b =>
                 {
                     b.Property<Guid>("UserId")
@@ -170,15 +180,6 @@ namespace Online_Learning_Platform.Migrations
                     b.HasKey("UserId");
 
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("Online_Learning_Platform.Model.Course", b =>
-                {
-                    b.HasOne("Online_Learning_Platform.Model.User", "User")
-                        .WithMany("Courses")
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Online_Learning_Platform.Model.Enrollment", b =>
@@ -218,6 +219,25 @@ namespace Online_Learning_Platform.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Online_Learning_Platform.Model.StudentCourse", b =>
+                {
+                    b.HasOne("Online_Learning_Platform.Model.Course", "Course")
+                        .WithMany("StudentCourses")
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Online_Learning_Platform.Model.User", "User")
+                        .WithMany("StudentCourses")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Online_Learning_Platform.Model.Course", b =>
                 {
                     b.Navigation("Enrollments");
@@ -225,13 +245,15 @@ namespace Online_Learning_Platform.Migrations
                     b.Navigation("Instructors");
 
                     b.Navigation("Reviews");
+
+                    b.Navigation("StudentCourses");
                 });
 
             modelBuilder.Entity("Online_Learning_Platform.Model.User", b =>
                 {
-                    b.Navigation("Courses");
-
                     b.Navigation("Reviews");
+
+                    b.Navigation("StudentCourses");
                 });
 #pragma warning restore 612, 618
         }

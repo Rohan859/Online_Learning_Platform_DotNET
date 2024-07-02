@@ -11,5 +11,7 @@ namespace Online_Learning_Platform.Model
         public Progress Progress { get; set; }
         public Course? Course { get; set; }
         public Guid? CourseId { get; set; } 
+
+
     }
 }

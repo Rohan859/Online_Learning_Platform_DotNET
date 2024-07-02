@@ -71,11 +71,11 @@ namespace Online_Learning_Platform.Controller
 
 
         [HttpGet("/noOfInstructorsByCourseId")]
-        public ActionResult<string>GetListOfInstructorByCourseId([FromQuery]Guid courseId)
+        public ActionResult<string>GetCountOfInstructorByCourseId([FromQuery]Guid courseId)
         {
             try
             {
-                var ans = _instructorService.GetListOfInstructorByCourseId(courseId);
+                var ans = _instructorService.GetCountOfInstructorByCourseId(courseId);
                 return Ok($"No of instructor for the course is {ans}");
             }
             catch (Exception e)
@@ -84,6 +84,15 @@ namespace Online_Learning_Platform.Controller
             }
 
             return BadRequest("Course is not exist");
+        }
+
+        [HttpGet("/getListOfInstructorsByCourseId")]
+        public ActionResult<List<Instructor>> GetListOfInstructorsByCourseId([FromQuery]Guid courseId)
+        {
+            List<Instructor>instructors = _instructorService
+                .GetListOfInstructorsByCourseId(courseId) ;
+
+            return Ok(instructors);
         }
     }
 }

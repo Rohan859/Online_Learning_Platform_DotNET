@@ -12,9 +12,11 @@ namespace Online_Learning_Platform.Model
         public string? Email { get; set; }
         public string? MobileNo {  get; set; }
 
-        public List<Course> Courses { get; set; }=new List<Course>();
+        //public List<Course> Courses { get; set; }=new List<Course>();
         
 
         public List<Review> Reviews { get; set; }=new List<Review>();
+
+        public List<StudentCourse>? StudentCourses { get; set; }
     }
 }

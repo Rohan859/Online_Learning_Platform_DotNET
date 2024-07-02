@@ -113,5 +113,22 @@ namespace Online_Learning_Platform.Controller
 
             return BadRequest("Course does not exist");
         }
+
+        [HttpGet("/getListOfUserNameEnrolledByCourseId")]
+        public ActionResult<List<string>> GetAllEnrollmentsByCourseId([FromQuery] Guid courseId)
+        {
+            try
+            {
+                var ans = _courseService.GetAllEnrollmentsByCourseId(courseId);
+
+                return Ok(ans);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error is : " + e.Message);
+            }
+
+            return BadRequest("Course does not exist");
+        }
     }
 }

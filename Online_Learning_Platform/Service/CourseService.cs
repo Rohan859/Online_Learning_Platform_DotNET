@@ -22,7 +22,7 @@ namespace Online_Learning_Platform.Service
                 return "Not Possible";
             }
 
-            User user = _allTheDbContext.Users.Find(course.UserId); 
+            //User user = _allTheDbContext.Users.Find(course.UserId); 
 
             Course newCourse = new Course
             {
@@ -152,5 +152,35 @@ namespace Online_Learning_Platform.Service
 
             return course.Enrollments.Count;
         }
+
+        public List<string>GetAllEnrollmentsByCourseId(Guid courseId)
+        {
+            var course = _allTheDbContext.Courses.Find(courseId);
+            if(course==null)
+            {
+                throw new Exception("Course does not exist");
+            }
+
+            List<User>usersList = _allTheDbContext.StudentCourses
+                .Include(x => x.User)
+                .Where(x => x.CourseId==courseId)
+                .Select(x => x.User)
+                .ToList()!;
+
+            if(usersList==null)
+            {
+                throw new Exception("No users found");
+            }
+
+            List<string>names = new List<string>();
+
+            foreach (var user in usersList)
+            {
+                names.Add(user.UserName!);
+            }
+
+            return names;
+        }
+
     }
 }

@@ -17,14 +17,16 @@ namespace Online_Learning_Platform.Model
 
 
         public List<Instructor> Instructors { get; set; }= new List<Instructor>();
-        
-        public User? User { get; set; }
-        public Guid? UserId { get; set; }
+
+        //public User? User { get; set; }
+        //public Guid? UserId { get; set; }
+
+        List<User>Users { get; set; } = new List<User>();
 
         public List<Review> Reviews { get; set; } =new List<Review>();
 
         public List<Enrollment> Enrollments { get; set; }=new List<Enrollment>();
 
-        
+        public List<StudentCourse>? StudentCourses { get; set; }
     }
 }

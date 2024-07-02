@@ -92,44 +92,29 @@ namespace Online_Learning_Platform.Service
 
         public List<Course> GetCourseListForUserById(Guid userId)
         {
-            //var user = _theDbContext.Users.Find(userId);
-            //if(user == null)
-            // {
-            //     return null;
-            // }
+            List<Course> courseList = _theDbContext.StudentCourses
+                    .Include(sc => sc.Course) // Include the Course entity in the query
+                    .Where(sc => sc.UserId == userId) // Filter by userId
+                    .Select(sc => sc.Course) // Select the Course entity from StudentCourses
+                    .ToList()!; // Materialize the result into a List<Course>
 
-            // var courseList = user.Courses;
-            // return courseList;
-
-            var user = _theDbContext.Users
-            .Include(u => u.Courses) // Eager load courses
-            .FirstOrDefault(u => u.UserId == userId);
-
-                if (user == null)
-                {
-                    return null; // Or handle appropriately (throw exception, return empty list, etc.)
-                }
-
-                return user.Courses.ToList();
+            return courseList;
         }
 
 
         public int CountEnrollCoursesByUserId(Guid userId)
         {
-            var user = _theDbContext.Users
-            .Include(u => u.Courses) // Eager load courses
-            .FirstOrDefault(u => u.UserId == userId);
+            List<Course> courseList = _theDbContext.StudentCourses
+                    .Include(sc => sc.Course) // Include the Course entity in the query
+                    .Where(sc => sc.UserId == userId) // Filter by userId
+                    .Select(sc => sc.Course) // Select the Course entity from StudentCourses
+                    .ToList()!; // Materialize the result into a List<Course>
 
-            if (user == null)
-            {
-                return 0; // Or handle appropriately (throw exception, return empty list, etc.)
-            }
-
-            return user.Courses.ToList().Count;
+            return courseList.Count;
         }
 
 
-        public int GetNoOfReviewsByUserId(Guid userId)
+        public int GetNoOfReviewsByUserId(Guid userId) 
         {
             var user = _theDbContext.Users
                 .Include(u => u.Reviews)

@@ -125,7 +125,7 @@ namespace Online_Learning_Platform.Service
             return $"{instructor.InstructorName} is assigned for {course.CourseName} course";
         }
 
-        public int GetListOfInstructorByCourseId(Guid courseId)
+        public int GetCountOfInstructorByCourseId(Guid courseId)
         {
             var course = _theDbContext.Courses
                 .Include(e => e.Instructors)
@@ -138,6 +138,15 @@ namespace Online_Learning_Platform.Service
             }
             return course.Instructors.Count();
 
+        }
+
+        public List<Instructor>GetListOfInstructorsByCourseId(Guid courseId)
+        {
+            List<Instructor>instructorList = _theDbContext.Instructors
+                .Where(x => x.CourseId == courseId)
+                .ToList();
+                
+            return instructorList;
         }
     }
 }

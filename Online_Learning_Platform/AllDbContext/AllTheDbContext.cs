@@ -16,6 +16,7 @@ namespace Online_Learning_Platform.AllDbContext
         public DbSet<Enrollment> Enrollments { get; set; }
         public DbSet<Instructor> Instructors { get; set; }
         public DbSet<Review> Reviews { get; set; }
+        public DbSet<StudentCourse> StudentCourses { get; set; }
 
 
 
@@ -45,12 +46,27 @@ namespace Online_Learning_Platform.AllDbContext
 
 
 
-            modelBuilder.Entity<User>()
-                .HasMany(e => e.Courses) //one user can have many courses
-                .WithOne(e => e.User)
+
+            //modelBuilder.Entity<User>()
+            //    .HasMany(e => e.Courses) //one user can have many courses
+            //    .WithOne(e => e.User)
+            //    .HasForeignKey(e => e.UserId);
+
+
+            modelBuilder.Entity<StudentCourse>()
+                .HasKey(e => new {e.UserId, e.CourseId});
+
+
+            modelBuilder.Entity<StudentCourse>()
+                .HasOne(e => e.User)
+                .WithMany(e => e.StudentCourses)
                 .HasForeignKey(e => e.UserId);
 
 
+            modelBuilder.Entity<StudentCourse>()
+                .HasOne(e => e.Course)
+                .WithMany(e => e.StudentCourses)
+                .HasForeignKey(e => e.CourseId);
 
 
             modelBuilder.Entity<Course>() //one course can have many instructors
