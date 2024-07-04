@@ -31,7 +31,18 @@ namespace Online_Learning_Platform.Service
             }
 
 
-            //2. generate new enrollmrnt id
+            //check user is already enrolled
+            //in the same course or not
+            bool isAlreadyEnrolled = _dbContext.Enrollments
+                .Any(e => e.UserId ==  userId && e.CourseId == courseId);
+
+            if (isAlreadyEnrolled)
+            {
+                return $"{user.UserName} is already enrolled in {course.CourseName} course";
+            }
+
+
+            //2. generate new enrollment id
             var enrollment = new Enrollment();
             enrollment.EnrollmentId = Guid.NewGuid();
 
@@ -42,6 +53,10 @@ namespace Online_Learning_Platform.Service
             //4. in user's course list add the new course
             enrollment.Course=course;
             enrollment.CourseId=courseId;
+
+            
+            enrollment.User = user;
+            enrollment.UserId = userId;
 
             //user.Courses.Add(course);
 
@@ -102,6 +117,7 @@ namespace Online_Learning_Platform.Service
 
             var enrollment = _dbContext.Enrollments
                                 .Include(e => e.Course)
+                                .Include(e => e.User)
                                 .ThenInclude(e => e.StudentCourses)
                                 .FirstOrDefault(e => e.EnrollmentId == enrollmentId);
             // 2. Validate the enrollment
@@ -118,17 +134,21 @@ namespace Online_Learning_Platform.Service
                 return "Course associated with enrollment is null";
             }
 
-            //var user = course.User;
-
-            var studentCourse = course.StudentCourses
-                .FirstOrDefault(e => e.CourseId==course.CourseId);
-            
-            var user = _dbContext.Users.Find(studentCourse.UserId);
+            var user = enrollment.User;
 
             if (user == null)
             {
                 return "User associated with course is null";
             }
+
+            //var user = course.User;
+
+            var studentCourse = course.StudentCourses
+                .FirstOrDefault(e => e.CourseId == course.CourseId && e.UserId == user.UserId);
+
+            //var user = _dbContext.Users.Find(studentCourse.UserId);
+
+           
 
             try
             {
@@ -140,6 +160,7 @@ namespace Online_Learning_Platform.Service
 
                 // 5. Update references to null
                 enrollment.Course = null;
+                enrollment.User = null;
 
                 // 6. Delete the enrollment
                 _dbContext.Enrollments.Remove(enrollment);

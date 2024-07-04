@@ -12,8 +12,8 @@ using Online_Learning_Platform.AllDbContext;
 namespace Online_Learning_Platform.Migrations
 {
     [DbContext(typeof(AllTheDbContext))]
-    [Migration("20240702083558_dd")]
-    partial class dd
+    [Migration("20240703083959_add")]
+    partial class add
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -75,9 +75,14 @@ namespace Online_Learning_Platform.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("EnrollmentId");
 
                     b.HasIndex("CourseId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Enrollments");
                 });
@@ -188,7 +193,15 @@ namespace Online_Learning_Platform.Migrations
                         .WithMany("Enrollments")
                         .HasForeignKey("CourseId");
 
+                    b.HasOne("Online_Learning_Platform.Model.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Course");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Online_Learning_Platform.Model.Instructor", b =>

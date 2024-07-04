@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -7,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Online_Learning_Platform.Migrations
 {
     /// <inheritdoc />
-    public partial class dd : Migration
+    public partial class add : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -46,25 +45,6 @@ namespace Online_Learning_Platform.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Enrollments",
-                columns: table => new
-                {
-                    EnrollmentId = table.Column<Guid>(type: "uuid", nullable: false),
-                    EnrollmentDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Progress = table.Column<string>(type: "text", nullable: false),
-                    CourseId = table.Column<Guid>(type: "uuid", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Enrollments", x => x.EnrollmentId);
-                    table.ForeignKey(
-                        name: "FK_Enrollments_Courses_CourseId",
-                        column: x => x.CourseId,
-                        principalTable: "Courses",
-                        principalColumn: "CourseId");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Instructors",
                 columns: table => new
                 {
@@ -86,6 +66,32 @@ namespace Online_Learning_Platform.Migrations
                         column: x => x.CourseId,
                         principalTable: "Courses",
                         principalColumn: "CourseId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Enrollments",
+                columns: table => new
+                {
+                    EnrollmentId = table.Column<Guid>(type: "uuid", nullable: false),
+                    EnrollmentDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Progress = table.Column<string>(type: "text", nullable: false),
+                    CourseId = table.Column<Guid>(type: "uuid", nullable: true),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Enrollments", x => x.EnrollmentId);
+                    table.ForeignKey(
+                        name: "FK_Enrollments_Courses_CourseId",
+                        column: x => x.CourseId,
+                        principalTable: "Courses",
+                        principalColumn: "CourseId");
+                    table.ForeignKey(
+                        name: "FK_Enrollments_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -142,6 +148,11 @@ namespace Online_Learning_Platform.Migrations
                 name: "IX_Enrollments_CourseId",
                 table: "Enrollments",
                 column: "CourseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Enrollments_UserId",
+                table: "Enrollments",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Instructors_CourseId",

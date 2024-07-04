@@ -12,6 +12,7 @@ namespace Online_Learning_Platform.Model
         public Course? Course { get; set; }
         public Guid? CourseId { get; set; } 
 
-
+        public Guid UserId { get; set; }
+        public User? User { get; set; }
     }
 }

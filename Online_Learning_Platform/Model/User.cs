@@ -18,5 +18,8 @@ namespace Online_Learning_Platform.Model
         public List<Review> Reviews { get; set; }=new List<Review>();
 
         public List<StudentCourse>? StudentCourses { get; set; }
+
+
+        List<Enrollment>Enrollments { get; set; } =new List<Enrollment>();
     }
 }
