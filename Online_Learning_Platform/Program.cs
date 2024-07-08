@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Online_Learning_Platform.AllDbContext;
+using Online_Learning_Platform.Profiles;
 using Online_Learning_Platform.Service;
 using System.Text.Json.Serialization;
 
@@ -36,6 +37,11 @@ builder.Services.AddScoped<CourseAnalyticsService>();
 builder.Services.AddScoped<ReviewService>();
 
 
+//add profiles
+builder.Services.AddAutoMapper(typeof(UserProfile));
+builder.Services.AddAutoMapper(typeof(ReviewProfile));
+builder.Services.AddAutoMapper(typeof(InstructorProfile));
+builder.Services.AddAutoMapper(typeof(CourseProfile));
 
 var app = builder.Build();
 

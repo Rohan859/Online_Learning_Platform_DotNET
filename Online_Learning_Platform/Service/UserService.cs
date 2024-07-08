@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Online_Learning_Platform.AllDbContext;
 using Online_Learning_Platform.DTOs;
 using Online_Learning_Platform.Model;
@@ -8,23 +9,19 @@ namespace Online_Learning_Platform.Service
     public class UserService
     {
         private readonly AllTheDbContext _theDbContext;
+        private readonly IMapper _mapper;
 
-        public UserService(AllTheDbContext allTheDbContext)
+        public UserService(AllTheDbContext allTheDbContext, IMapper mapper)
         {
             _theDbContext = allTheDbContext;
+            _mapper = mapper;
         }
 
         public string Register(UserRegistrationRequestDTO userRegistrationRequestDTO)
         {
-            User user = new User
-            {
-                UserId = Guid.NewGuid(),
-                UserName = userRegistrationRequestDTO.UserName,
-                Password = userRegistrationRequestDTO.Password,
-                Email = userRegistrationRequestDTO.Email,
-                MobileNo = userRegistrationRequestDTO.MobileNo
-            };
 
+            var user = _mapper.Map<User>(userRegistrationRequestDTO);
+            user.UserId = Guid.NewGuid();
 
             _theDbContext.Users.Add(user);
             _theDbContext.SaveChanges();
@@ -58,32 +55,34 @@ namespace Online_Learning_Platform.Service
                 return "Not Found";
             }
 
-            var name = userProfileUpdateRequestDTO.UserName;
-           var password = userProfileUpdateRequestDTO.Password;
-            var mobile= userProfileUpdateRequestDTO.MobileNo;
-            var email= userProfileUpdateRequestDTO.Email;
+            // var name = userProfileUpdateRequestDTO.UserName;
+            //var password = userProfileUpdateRequestDTO.Password;
+            // var mobile= userProfileUpdateRequestDTO.MobileNo;
+            // var email= userProfileUpdateRequestDTO.Email;
 
-            if(name!=null)
-            {
-                user.UserName= name;
-            }
+            // if(name!=null)
+            // {
+            //     user.UserName= name;
+            // }
 
-            if(password!=null)
-            {
-                user.Password= password;
-            }
+            // if(password!=null)
+            // {
+            //     user.Password= password;
+            // }
 
-            if(mobile!=null)
-            {
-                user.MobileNo= mobile;
-            }
+            // if(mobile!=null)
+            // {
+            //     user.MobileNo= mobile;
+            // }
 
-            if (email!=null)
-            {
-                user.Email= email;
-            }
+            // if (email!=null)
+            // {
+            //     user.Email= email;
+            // }
 
-            _theDbContext.Users.Update(user);
+            _mapper.Map(userProfileUpdateRequestDTO, user);
+
+            //_theDbContext.Users.Update(user);
             _theDbContext.SaveChanges();
 
             return "User details got successfully updated";

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Online_Learning_Platform.AllDbContext;
 using Online_Learning_Platform.DTOs;
 using Online_Learning_Platform.Enums;
@@ -9,10 +10,12 @@ namespace Online_Learning_Platform.Service
     public class InstructorService
     {
         private readonly AllTheDbContext _theDbContext;
+        private readonly IMapper _mapper;
 
-        public InstructorService(AllTheDbContext context)
+        public InstructorService(AllTheDbContext context, IMapper mapper)
         {
             _theDbContext = context;
+            _mapper = mapper;
         }
         public string Register(Instructor instructor)
         {
@@ -45,37 +48,38 @@ namespace Online_Learning_Platform.Service
                 return "Not Found";
             }
 
-            var name=instructorUpdateRequestDTO.InstructorName;
-            var email = instructorUpdateRequestDTO.Email;
-            var password = instructorUpdateRequestDTO.Password;
-            var expert = instructorUpdateRequestDTO.Expertise;
-            var description = instructorUpdateRequestDTO.Description;
+            //var name=instructorUpdateRequestDTO.InstructorName;
+            //var email = instructorUpdateRequestDTO.Email;
+            //var password = instructorUpdateRequestDTO.Password;
+            ////var expert = instructorUpdateRequestDTO.Expertise;
+            //var description = instructorUpdateRequestDTO.Description;
 
-            if(name!=null)
-            {
-                instructor.InstructorName= name;
-            }
+            //if(name!=null)
+            //{
+            //    instructor.InstructorName= name;
+            //}
 
-            if(email!=null)
-            {
-                instructor.Email= email;
-            }
+            //if(email!=null)
+            //{
+            //    instructor.Email= email;
+            //}
 
-            if(password!=null)
-            {
-                instructor.Password= password;
-            }
+            //if(password!=null)
+            //{
+            //    instructor.Password= password;
+            //}
 
-            if(expert!=null)
-            {
-                instructor.Expertise= expert;
-            }
+            ////if(expert!=null)
+            ////{
+            ////    instructor.Expertise= expert;
+            ////}
 
-            if (description != null)
-            {
-                instructor.Description= description;
-            }
+            //if (description != null)
+            //{
+            //    instructor.Description= description;
+            //}
 
+            _mapper.Map(instructorUpdateRequestDTO, instructor);
            
             _theDbContext.SaveChanges ();
 
