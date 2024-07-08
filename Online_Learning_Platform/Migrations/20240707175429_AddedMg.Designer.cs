@@ -12,8 +12,8 @@ using Online_Learning_Platform.AllDbContext;
 namespace Online_Learning_Platform.Migrations
 {
     [DbContext(typeof(AllTheDbContext))]
-    [Migration("20240703083959_add")]
-    partial class add
+    [Migration("20240707175429_AddedMg")]
+    partial class AddedMg
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,21 @@ namespace Online_Learning_Platform.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("CourseUser", b =>
+                {
+                    b.Property<Guid>("CoursesCourseId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UsersUserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("CoursesCourseId", "UsersUserId");
+
+                    b.HasIndex("UsersUserId");
+
+                    b.ToTable("CourseUser");
+                });
 
             modelBuilder.Entity("Online_Learning_Platform.Model.Course", b =>
                 {
@@ -149,21 +164,6 @@ namespace Online_Learning_Platform.Migrations
                     b.ToTable("Reviews");
                 });
 
-            modelBuilder.Entity("Online_Learning_Platform.Model.StudentCourse", b =>
-                {
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("CourseId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("UserId", "CourseId");
-
-                    b.HasIndex("CourseId");
-
-                    b.ToTable("StudentCourses");
-                });
-
             modelBuilder.Entity("Online_Learning_Platform.Model.User", b =>
                 {
                     b.Property<Guid>("UserId")
@@ -187,6 +187,21 @@ namespace Online_Learning_Platform.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("CourseUser", b =>
+                {
+                    b.HasOne("Online_Learning_Platform.Model.Course", null)
+                        .WithMany()
+                        .HasForeignKey("CoursesCourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Online_Learning_Platform.Model.User", null)
+                        .WithMany()
+                        .HasForeignKey("UsersUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Online_Learning_Platform.Model.Enrollment", b =>
                 {
                     b.HasOne("Online_Learning_Platform.Model.Course", "Course")
@@ -194,7 +209,7 @@ namespace Online_Learning_Platform.Migrations
                         .HasForeignKey("CourseId");
 
                     b.HasOne("Online_Learning_Platform.Model.User", "User")
-                        .WithMany()
+                        .WithMany("Enrollments")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -232,25 +247,6 @@ namespace Online_Learning_Platform.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Online_Learning_Platform.Model.StudentCourse", b =>
-                {
-                    b.HasOne("Online_Learning_Platform.Model.Course", "Course")
-                        .WithMany("StudentCourses")
-                        .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Online_Learning_Platform.Model.User", "User")
-                        .WithMany("StudentCourses")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Course");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Online_Learning_Platform.Model.Course", b =>
                 {
                     b.Navigation("Enrollments");
@@ -258,15 +254,13 @@ namespace Online_Learning_Platform.Migrations
                     b.Navigation("Instructors");
 
                     b.Navigation("Reviews");
-
-                    b.Navigation("StudentCourses");
                 });
 
             modelBuilder.Entity("Online_Learning_Platform.Model.User", b =>
                 {
-                    b.Navigation("Reviews");
+                    b.Navigation("Enrollments");
 
-                    b.Navigation("StudentCourses");
+                    b.Navigation("Reviews");
                 });
 #pragma warning restore 612, 618
         }

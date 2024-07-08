@@ -92,25 +92,40 @@ namespace Online_Learning_Platform.Service
 
         public List<Course> GetCourseListForUserById(Guid userId)
         {
-            List<Course> courseList = _theDbContext.StudentCourses
-                    .Include(sc => sc.Course) // Include the Course entity in the query
-                    .Where(sc => sc.UserId == userId) // Filter by userId
-                    .Select(sc => sc.Course) // Select the Course entity from StudentCourses
-                    .ToList()!; // Materialize the result into a List<Course>
+            var user = _theDbContext.Users
+                .Include(x => x.Enrollments)
+                .ThenInclude(x => x.Course)
+                .FirstOrDefault(x => x.UserId == userId);
 
+            List<Course> courseList = user?.Enrollments
+                .Select(x => x.Course)
+                .Distinct()
+                .ToList()!;
+                
             return courseList;
+            
+
+            //List<Course> courseList = _theDbContext.StudentCourses
+            //        .Include(sc => sc.Course) // Include the Course entity in the query
+            //        .Where(sc => sc.UserId == userId) // Filter by userId
+            //        .Select(sc => sc.Course) // Select the Course entity from StudentCourses
+            //        .ToList()!; // Materialize the result into a List<Course>
+
+            //return courseList;
         }
 
 
         public int CountEnrollCoursesByUserId(Guid userId)
         {
-            List<Course> courseList = _theDbContext.StudentCourses
-                    .Include(sc => sc.Course) // Include the Course entity in the query
-                    .Where(sc => sc.UserId == userId) // Filter by userId
-                    .Select(sc => sc.Course) // Select the Course entity from StudentCourses
-                    .ToList()!; // Materialize the result into a List<Course>
+            return GetCourseListForUserById(userId).Count();
 
-            return courseList.Count;
+            //List<Course> courseList = _theDbContext.StudentCourses
+            //        .Include(sc => sc.Course) // Include the Course entity in the query
+            //        .Where(sc => sc.UserId == userId) // Filter by userId
+            //        .Select(sc => sc.Course) // Select the Course entity from StudentCourses
+            //        .ToList()!; // Materialize the result into a List<Course>
+
+            //return courseList.Count;
         }
 
 

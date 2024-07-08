@@ -16,7 +16,7 @@ namespace Online_Learning_Platform.AllDbContext
         public DbSet<Enrollment> Enrollments { get; set; }
         public DbSet<Instructor> Instructors { get; set; }
         public DbSet<Review> Reviews { get; set; }
-        public DbSet<StudentCourse> StudentCourses { get; set; }
+        //public DbSet<StudentCourse> StudentCourses { get; set; }
 
 
 
@@ -53,20 +53,20 @@ namespace Online_Learning_Platform.AllDbContext
             //    .HasForeignKey(e => e.UserId);
 
 
-            modelBuilder.Entity<StudentCourse>()
-                .HasKey(e => new {e.UserId, e.CourseId});
+            //modelBuilder.Entity<StudentCourse>()
+            //    .HasKey(e => new {e.UserId, e.CourseId});
 
 
-            modelBuilder.Entity<StudentCourse>()
-                .HasOne(e => e.User)
-                .WithMany(e => e.StudentCourses)
-                .HasForeignKey(e => e.UserId);
+            //modelBuilder.Entity<StudentCourse>()
+            //    .HasOne(e => e.User)
+            //    .WithMany(e => e.StudentCourses)
+            //    .HasForeignKey(e => e.UserId);
 
 
-            modelBuilder.Entity<StudentCourse>()
-                .HasOne(e => e.Course)
-                .WithMany(e => e.StudentCourses)
-                .HasForeignKey(e => e.CourseId);
+            //modelBuilder.Entity<StudentCourse>()
+            //    .HasOne(e => e.Course)
+            //    .WithMany(e => e.StudentCourses)
+            //    .HasForeignKey(e => e.CourseId);
 
 
             modelBuilder.Entity<Course>() //one course can have many instructors
@@ -94,7 +94,16 @@ namespace Online_Learning_Platform.AllDbContext
                 .HasForeignKey(e => e.CourseId);
 
 
+            modelBuilder.Entity<User>() //one user can make many enrollments
+                .HasMany(e => e.Enrollments)
+                .WithOne(e => e.User)
+                .HasForeignKey(e => e.UserId);
 
+
+
+            modelBuilder.Entity<Course>()
+                .HasMany(x => x.Users)
+                .WithMany(x => x.Courses);
 
         }
     }

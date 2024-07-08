@@ -153,23 +153,48 @@ namespace Online_Learning_Platform.Service
             return course.Enrollments.Count;
         }
 
-        public List<string>GetAllEnrollmentsByCourseId(Guid courseId)
+        public Tuple<List<string>,string>GetAllEnrollmentsByCourseId(Guid courseId)
         {
-            var course = _allTheDbContext.Courses.Find(courseId);
-            if(course==null)
+            // var course = _allTheDbContext.Courses.Find(courseId);
+            var course = _allTheDbContext.Courses
+                 .Include(e => e.Enrollments)
+                 .ThenInclude(e => e.User)
+                 .FirstOrDefault(x => x.CourseId == courseId);
+
+            if (course==null)
             {
-                throw new Exception("Course does not exist");
+                //throw new Exception("Course does not exist");
+                return Tuple.Create<List<string>, string>(null, "Course does not exist");
             }
 
-            List<User>usersList = _allTheDbContext.StudentCourses
-                .Include(x => x.User)
-                .Where(x => x.CourseId==courseId)
-                .Select(x => x.User)
-                .ToList()!;
+            //List<User>usersList = _allTheDbContext.StudentCourses
+            //    .Include(x => x.User)
+            //    .Where(x => x.CourseId==courseId)
+            //    .Select(x => x.User)
+            //    .ToList()!;
 
-            if(usersList==null)
+            //find enrollments
+            var enrollments = course.Enrollments;
+
+            if(enrollments==null || enrollments.Count==0)
             {
-                throw new Exception("No users found");
+                return Tuple.Create<List<string>, string>(null, "No enrollments found");
+            }
+
+            //find the users from the enrollments
+
+            List<User> usersList = [];
+
+            foreach (var enrollment in enrollments)
+            {
+                usersList.Add(enrollment.User);
+            }
+
+
+            if(usersList.Count==0)
+            {
+                //throw new Exception("No users found");
+                return Tuple.Create<List<string>, string>(null, "No users found");
             }
 
             List<string>names = new List<string>();
@@ -179,7 +204,8 @@ namespace Online_Learning_Platform.Service
                 names.Add(user.UserName!);
             }
 
-            return names;
+            //return names;
+            return Tuple.Create<List<string>, string>(names, "Users are found");
         }
 
     }

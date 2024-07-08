@@ -117,18 +117,24 @@ namespace Online_Learning_Platform.Controller
         [HttpGet("/getListOfUserNameEnrolledByCourseId")]
         public ActionResult<List<string>> GetAllEnrollmentsByCourseId([FromQuery] Guid courseId)
         {
-            try
-            {
-                var ans = _courseService.GetAllEnrollmentsByCourseId(courseId);
+            var ans = _courseService.GetAllEnrollmentsByCourseId(courseId);
 
-                return Ok(ans);
-            }
-            catch (Exception e)
+            if(ans.Item2 == "Course does not exist")
             {
-                Console.WriteLine("Error is : " + e.Message);
+                return BadRequest(ans.Item2);
             }
 
-            return BadRequest("Course does not exist");
+            if(ans.Item2 == "No enrollments found")
+            {
+                return NotFound(ans.Item2);
+            }
+
+            if (ans.Item2 == "No users found")
+            {
+                return NotFound(ans.Item2);
+            }
+
+            return Ok(ans.Item1);
         }
     }
 }

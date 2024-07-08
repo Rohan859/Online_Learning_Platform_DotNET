@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Online_Learning_Platform.Migrations
 {
     /// <inheritdoc />
-    public partial class add : Migration
+    public partial class AddedMg : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -69,6 +69,30 @@ namespace Online_Learning_Platform.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "CourseUser",
+                columns: table => new
+                {
+                    CoursesCourseId = table.Column<Guid>(type: "uuid", nullable: false),
+                    UsersUserId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CourseUser", x => new { x.CoursesCourseId, x.UsersUserId });
+                    table.ForeignKey(
+                        name: "FK_CourseUser_Courses_CoursesCourseId",
+                        column: x => x.CoursesCourseId,
+                        principalTable: "Courses",
+                        principalColumn: "CourseId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CourseUser_Users_UsersUserId",
+                        column: x => x.UsersUserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Enrollments",
                 columns: table => new
                 {
@@ -120,29 +144,10 @@ namespace Online_Learning_Platform.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "StudentCourses",
-                columns: table => new
-                {
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    CourseId = table.Column<Guid>(type: "uuid", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_StudentCourses", x => new { x.UserId, x.CourseId });
-                    table.ForeignKey(
-                        name: "FK_StudentCourses_Courses_CourseId",
-                        column: x => x.CourseId,
-                        principalTable: "Courses",
-                        principalColumn: "CourseId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_StudentCourses_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Cascade);
-                });
+            migrationBuilder.CreateIndex(
+                name: "IX_CourseUser_UsersUserId",
+                table: "CourseUser",
+                column: "UsersUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Enrollments_CourseId",
@@ -168,16 +173,14 @@ namespace Online_Learning_Platform.Migrations
                 name: "IX_Reviews_UserId",
                 table: "Reviews",
                 column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_StudentCourses_CourseId",
-                table: "StudentCourses",
-                column: "CourseId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "CourseUser");
+
             migrationBuilder.DropTable(
                 name: "Enrollments");
 
@@ -186,9 +189,6 @@ namespace Online_Learning_Platform.Migrations
 
             migrationBuilder.DropTable(
                 name: "Reviews");
-
-            migrationBuilder.DropTable(
-                name: "StudentCourses");
 
             migrationBuilder.DropTable(
                 name: "Courses");
