@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Online_Learning_Platform.AllDbContext;
+using Online_Learning_Platform.Interfaces;
 using Online_Learning_Platform.Profiles;
 using Online_Learning_Platform.Service;
 using System.Text.Json.Serialization;
@@ -29,12 +30,12 @@ builder.Services.AddDbContext<AllTheDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 
-builder.Services.AddScoped<UserService>();
-builder.Services.AddScoped<InstructorService>();
-builder.Services.AddScoped<CourseService>();
-builder.Services.AddScoped<EnrollmentService>();
-builder.Services.AddScoped<CourseAnalyticsService>();
-builder.Services.AddScoped<ReviewService>();
+builder.Services.AddScoped<IUserService,UserService>();
+builder.Services.AddScoped<IInstructorService,InstructorService>();
+builder.Services.AddScoped<ICourseService,CourseService>();
+builder.Services.AddScoped<IEnrollmentService,EnrollmentService>();
+builder.Services.AddScoped<ICourseAnalyticsService,CourseAnalyticsService>();
+builder.Services.AddScoped<IReviewService,ReviewService>();
 
 
 //add profiles

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Online_Learning_Platform.AllDbContext;
 using Online_Learning_Platform.DTOs;
+using Online_Learning_Platform.Interfaces;
 using Online_Learning_Platform.Model;
 using Online_Learning_Platform.Service;
 using UuidExtensions;
@@ -12,9 +13,9 @@ namespace Online_Learning_Platform.Controller
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly UserService _userService;
-
-        public UserController(UserService userService)
+        //private readonly UserService _userService;
+        private readonly IUserService _userService;
+        public UserController(IUserService userService)
         {
            _userService = userService;
         }
@@ -100,5 +101,7 @@ namespace Online_Learning_Platform.Controller
 
             return BadRequest("User is not exist");
         }
+
+        
     }
 }

@@ -3,11 +3,12 @@ using Microsoft.EntityFrameworkCore;
 using Online_Learning_Platform.AllDbContext;
 using Online_Learning_Platform.DTOs;
 using Online_Learning_Platform.Enums;
+using Online_Learning_Platform.Interfaces;
 using Online_Learning_Platform.Model;
 
 namespace Online_Learning_Platform.Service
 {
-    public class InstructorService
+    public class InstructorService : IInstructorService
     {
         private readonly AllTheDbContext _theDbContext;
         private readonly IMapper _mapper;
@@ -90,17 +91,33 @@ namespace Online_Learning_Platform.Service
 
         public string RemoveInstructor(Guid id)
         {
-            var instructor = _theDbContext.Instructors.Find(id);
+            var instructor = _theDbContext.Instructors
+                .Include(e => e.Course)
+                .FirstOrDefault(e => e.InstructorId==id);
 
             if(instructor == null)
             {
                 return "Not Found";
             }
 
-            _theDbContext.Instructors.Remove(instructor);
-            _theDbContext.SaveChanges();
+            
+            if(instructor.Course!=null && instructor.Course.Instructors.Count!=0)
+            {
+                instructor.Course.Instructors.Remove(instructor);
+                instructor.Course = null;
+            }
+            else
+            {
+                return "Either course is null or instructors list is empty";
+            }
 
-            return "Instructor is deleted successfully";
+
+                _theDbContext.Instructors.Remove(instructor);
+                _theDbContext.SaveChanges();
+
+                return "Instructor is deleted successfully";
+            
+           
         }
 
 
@@ -143,6 +160,9 @@ namespace Online_Learning_Platform.Service
             return course.Instructors.Count();
 
         }
+
+
+        
 
         public List<Instructor>GetListOfInstructorsByCourseId(Guid courseId)
         {

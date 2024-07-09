@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Online_Learning_Platform.Enums;
+using Online_Learning_Platform.Interfaces;
 using Online_Learning_Platform.Service;
 
 namespace Online_Learning_Platform.Controller
@@ -9,9 +10,11 @@ namespace Online_Learning_Platform.Controller
     [ApiController]
     public class CourseAnalytics : ControllerBase
     {
-        private  CourseAnalyticsService _courseAnalyticsService;
+        //private  CourseAnalyticsService _courseAnalyticsService;
+        private readonly ICourseAnalyticsService _courseAnalyticsService;
 
-        public CourseAnalytics(CourseAnalyticsService courseAnalyticsService)
+
+        public CourseAnalytics(ICourseAnalyticsService courseAnalyticsService)
         {
             _courseAnalyticsService = courseAnalyticsService;
         }

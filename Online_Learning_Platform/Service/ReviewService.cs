@@ -2,11 +2,12 @@
 using Microsoft.EntityFrameworkCore;
 using Online_Learning_Platform.AllDbContext;
 using Online_Learning_Platform.DTOs;
+using Online_Learning_Platform.Interfaces;
 using Online_Learning_Platform.Model;
 
 namespace Online_Learning_Platform.Service
 {
-    public class ReviewService
+    public class ReviewService : IReviewService
     {
         private readonly AllTheDbContext _theDbContext;
         private readonly IMapper _mapper;

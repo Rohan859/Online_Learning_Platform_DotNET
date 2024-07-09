@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Online_Learning_Platform.DTOs;
+using Online_Learning_Platform.Interfaces;
 using Online_Learning_Platform.Model;
 using Online_Learning_Platform.Service;
 
@@ -10,9 +11,10 @@ namespace Online_Learning_Platform.Controller
     [ApiController]
     public class InstructorController : ControllerBase
     {
-        private readonly InstructorService _instructorService;
+        //private readonly InstructorService _instructorService;
+        private readonly IInstructorService _instructorService;
 
-        public InstructorController(InstructorService instructorService)
+        public InstructorController(IInstructorService instructorService)
         {
             _instructorService = instructorService;
         }
@@ -47,6 +49,10 @@ namespace Online_Learning_Platform.Controller
                 return NotFound("Instructor is not found");
             }
 
+            if(res == "Either course is null or instructors list is empty")
+            {
+                return BadRequest(res);
+            }
             return Ok(res);
         }
 
@@ -94,5 +100,7 @@ namespace Online_Learning_Platform.Controller
 
             return Ok(instructors);
         }
+
+        
     }
 }

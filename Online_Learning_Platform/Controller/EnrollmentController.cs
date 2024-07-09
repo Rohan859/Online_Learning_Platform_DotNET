@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Online_Learning_Platform.Interfaces;
 using Online_Learning_Platform.Service;
 
 namespace Online_Learning_Platform.Controller
@@ -9,9 +10,9 @@ namespace Online_Learning_Platform.Controller
     [ApiController]
     public class EnrollmentController : ControllerBase
     {
-        private EnrollmentService _enrollmentService;
-
-        public EnrollmentController(EnrollmentService service)
+        //private EnrollmentService _enrollmentService;
+        private readonly IEnrollmentService _enrollmentService;
+        public EnrollmentController(IEnrollmentService service)
         {
             _enrollmentService = service;
         }

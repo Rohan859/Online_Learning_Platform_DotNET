@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Online_Learning_Platform.DTOs;
+using Online_Learning_Platform.Interfaces;
 using Online_Learning_Platform.Service;
 
 namespace Online_Learning_Platform.Controller
@@ -9,9 +10,10 @@ namespace Online_Learning_Platform.Controller
     [ApiController]
     public class ReviewController : ControllerBase
     {
-        private ReviewService _reviewService;
+        //private ReviewService _reviewService;
+        private readonly IReviewService _reviewService;
 
-        public ReviewController(ReviewService reviewService)
+        public ReviewController(IReviewService reviewService)
         {
             _reviewService = reviewService;
         }

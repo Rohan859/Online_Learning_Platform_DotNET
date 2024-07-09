@@ -1,11 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Online_Learning_Platform.AllDbContext;
 using Online_Learning_Platform.Enums;
+using Online_Learning_Platform.Interfaces;
 using Online_Learning_Platform.Model;
 
 namespace Online_Learning_Platform.Service
 {
-    public class EnrollmentService
+    public class EnrollmentService : IEnrollmentService
     {
         private readonly AllTheDbContext _dbContext;
 
@@ -196,16 +197,16 @@ namespace Online_Learning_Platform.Service
         }
 
 
-        List<Enrollment>GetAllTheEnrollments(Guid courseId)
-        {
-            var course = _dbContext.Courses.Find(courseId);
-            if (course == null)
-            {
-                throw new Exception("Course Not Found");
-            }
+        //List<Enrollment>GetAllTheEnrollments(Guid courseId)
+        //{
+        //    var course = _dbContext.Courses.Find(courseId);
+        //    if (course == null)
+        //    {
+        //        throw new Exception("Course Not Found");
+        //    }
 
-            return course.Enrollments;
-        }
+        //    return course.Enrollments;
+        //}
 
         public List<Enrollment>TrackProgress(Progress progress)
         {

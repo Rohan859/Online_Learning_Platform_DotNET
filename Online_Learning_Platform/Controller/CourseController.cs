@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Online_Learning_Platform.DTOs;
+using Online_Learning_Platform.Interfaces;
 using Online_Learning_Platform.Model;
 using Online_Learning_Platform.Service;
 
@@ -11,9 +12,9 @@ namespace Online_Learning_Platform.Controller
     [ApiController]
     public class CourseController : ControllerBase
     {
-        private CourseService _courseService;
-
-        public CourseController(CourseService courseService)
+       // private CourseService _courseService;
+       private readonly ICourseService _courseService;
+        public CourseController(ICourseService courseService)
         {
             _courseService = courseService;
         }

@@ -1,10 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Online_Learning_Platform.AllDbContext;
 using Online_Learning_Platform.Enums;
+using Online_Learning_Platform.Interfaces;
 
 namespace Online_Learning_Platform.Service
 {
-    public class CourseAnalyticsService
+    public class CourseAnalyticsService : ICourseAnalyticsService
     {
         private readonly AllTheDbContext _theDbContext;
 
