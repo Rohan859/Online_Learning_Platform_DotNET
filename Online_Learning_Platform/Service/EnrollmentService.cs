@@ -3,16 +3,26 @@ using Online_Learning_Platform.AllDbContext;
 using Online_Learning_Platform.Enums;
 using Online_Learning_Platform.Interfaces;
 using Online_Learning_Platform.Model;
+using Online_Learning_Platform.RepositoryInterface;
 
 namespace Online_Learning_Platform.Service
 {
     public class EnrollmentService : IEnrollmentService
     {
         private readonly AllTheDbContext _dbContext;
+       private readonly IEnrollmentRepository _enrollmentRepository;
+       private readonly IUserRepository _userRepository;    
+       private readonly ICourseRepository _courseRepository;
 
-        public EnrollmentService(AllTheDbContext context)
+        public EnrollmentService(IEnrollmentRepository enrollmentRepository,
+            IUserRepository userRepository,
+            ICourseRepository courseRepository,
+            AllTheDbContext allTheDbContext)
         {
-            _dbContext = context;
+           _enrollmentRepository = enrollmentRepository;
+           _userRepository = userRepository;   
+           _courseRepository = courseRepository;
+            _dbContext = allTheDbContext;
         }
 
 
@@ -20,20 +30,17 @@ namespace Online_Learning_Platform.Service
         {
             //1. validate the user and course
             //var user = _dbContext.Users.Find(userId);
-            var user = _dbContext.Users
-                .Include(x => x.Enrollments)
-                .Include(x => x.Courses)
-                .FirstOrDefault(x => x.UserId == userId);
+            var user = _userRepository
+                .GetUserByUserIdAndIncludesEnrollmentsAndCourses(userId);
+
 
             if (user == null)
             {
                 return "User not found";
             }
 
-            var course = _dbContext.Courses
-                .Include(e => e.Enrollments)
-                .Include(x => x.Users)
-                .FirstOrDefault(e => e.CourseId==courseId);
+            var course = _courseRepository
+                .GetCourseByCourseIdAndIncludesEnrollmentsAndUsers(courseId);
 
             if (course == null)
             {
@@ -43,8 +50,8 @@ namespace Online_Learning_Platform.Service
 
             //check user is already enrolled
             //in the same course or not
-            bool isAlreadyEnrolled = _dbContext.Enrollments
-                .Any(e => e.UserId ==  userId && e.CourseId == courseId);
+            bool isAlreadyEnrolled = _enrollmentRepository
+                .IsAlreadyEnrolled(userId, courseId);
 
             if (isAlreadyEnrolled)
             {
@@ -77,20 +84,10 @@ namespace Online_Learning_Platform.Service
             course.Enrollments.Add(enrollment);
             user.Enrollments.Add(enrollment);
 
-           // _dbContext.StudentCourses.Add(studentCourse);
-            _dbContext.Enrollments.Add(enrollment);
-            //_dbContext.Courses.Update(course);
-            //_dbContext.Users.Update(user);
+            _enrollmentRepository.AddToEnrollmentDb(enrollment);
 
-            _dbContext.SaveChanges();
+            _enrollmentRepository.Save();
 
-            //_dbContext.Users.Update(user);
-            //_dbContext.SaveChanges();
-
-            //_dbContext.Update(course);
-            //_dbContext.SaveChanges();
-
-            
 
             return $"Your enrollment is successfull, enrollment id is {enrollment.EnrollmentId}";
         }
@@ -106,12 +103,10 @@ namespace Online_Learning_Platform.Service
             //                            .FirstOrDefault(e => e.EnrollmentId == enrollmentId);
 
 
-            var enrollment = _dbContext.Enrollments
-                                .Include(e => e.Course)
-                                .ThenInclude(e => e.Users)
-                                .Include(e => e.User)
-                                //.ThenInclude(e => e.StudentCourses)
-                                .FirstOrDefault(e => e.EnrollmentId == enrollmentId);
+            var enrollment = _enrollmentRepository
+                .GetEnrollmentByEnrollmentIdAndIncludeTheUserTheCourseAndTheUsersofCourse
+                (enrollmentId);
+
             // 2. Validate the enrollment
             if (enrollment == null)
             {
@@ -160,15 +155,17 @@ namespace Online_Learning_Platform.Service
                 user.Courses.Remove(course);
 
               
-                course.Users.Remove(user);  
-                
+                course.Users.Remove(user);
+
 
                 // 6. Delete the enrollment
-                _dbContext.Enrollments.Remove(enrollment);
+                //_dbContext.Enrollments.Remove(enrollment);
+                _enrollmentRepository.Delete(enrollment);
                 //_dbContext.StudentCourses.Remove(studentCourse);
 
                 // 7. Save changes to the database
-                _dbContext.SaveChanges();
+                //_dbContext.SaveChanges();
+                _enrollmentRepository.Save();
 
                 return "Successfully unenrolled the course";
             }
@@ -210,9 +207,7 @@ namespace Online_Learning_Platform.Service
 
         public List<Enrollment>TrackProgress(Progress progress)
         {
-            var list = _dbContext.Enrollments
-                .Where(e => e.Progress == progress)
-                .ToList();
+            var list = _enrollmentRepository.TrackProgress(progress);
 
             return list;
         }

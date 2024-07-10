@@ -12,11 +12,20 @@ namespace Online_Learning_Platform.Service
     {
         private readonly AllTheDbContext _allTheDbContext;
         private readonly IMapper _mapper;
+        private readonly IEnrollmentService _enrollmentService;
+        private readonly IInstructorService _instructorService;
+        private readonly IReviewService _reviewService;
 
-        public CourseService(AllTheDbContext context,IMapper mapper)
+        public CourseService(AllTheDbContext context,IMapper mapper,
+            IEnrollmentService enrollmentService,
+            IInstructorService instructorService,
+            IReviewService reviewService)
         {
             _allTheDbContext = context;
             _mapper = mapper;
+            _enrollmentService = enrollmentService;
+            _instructorService = instructorService;
+            _reviewService = reviewService;
         }
 
         public string AddNewCourse(Course course)
@@ -67,12 +76,43 @@ namespace Online_Learning_Platform.Service
 
         public string RemoveCourseById(Guid courseId)
         {
-            var course = _allTheDbContext.Courses.Find(courseId);
+            var course = _allTheDbContext.Courses
+                .Include(x => x.Instructors)
+                .Include(x => x.Reviews)
+                .Include(x => x.Enrollments)
+                .Include(x => x.Users)
+                .FirstOrDefault(x => x.CourseId == courseId);
 
             if(course==null)
             {
                 return "Not Found";
             }
+
+            //remove all the reviews
+            foreach (var review in course.Reviews.ToList())
+            {
+                _reviewService.DeleteReview(review.ReviewId);
+            }
+
+            //remove all instructor in instructors list
+            foreach (var instructor in course.Instructors.ToList())
+            {
+                instructor.Course = null;
+            }
+
+            // unenroll all the enrollments
+            foreach (var enrollment in course.Enrollments.ToList())
+            {
+                _enrollmentService.UnEnroll(enrollment.EnrollmentId);
+            }
+
+            
+
+
+            //remove all the user
+            course.Users.Clear();
+
+
             _allTheDbContext.Courses.Remove(course);
             _allTheDbContext.SaveChanges();
 
