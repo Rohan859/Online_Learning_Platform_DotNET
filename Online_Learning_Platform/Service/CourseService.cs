@@ -5,27 +5,31 @@ using Online_Learning_Platform.DTOs;
 using Online_Learning_Platform.Enums;
 using Online_Learning_Platform.Interfaces;
 using Online_Learning_Platform.Model;
+using Online_Learning_Platform.RepositoryInterface;
 
 namespace Online_Learning_Platform.Service
 {
     public class CourseService : ICourseService
     {
-        private readonly AllTheDbContext _allTheDbContext;
         private readonly IMapper _mapper;
         private readonly IEnrollmentService _enrollmentService;
         private readonly IInstructorService _instructorService;
         private readonly IReviewService _reviewService;
+        private readonly ICourseRepository _courseRepository;
 
-        public CourseService(AllTheDbContext context,IMapper mapper,
+        public CourseService(
+            IMapper mapper,
             IEnrollmentService enrollmentService,
             IInstructorService instructorService,
-            IReviewService reviewService)
+            IReviewService reviewService,
+            ICourseRepository courseRepository)
         {
-            _allTheDbContext = context;
+            
             _mapper = mapper;
             _enrollmentService = enrollmentService;
             _instructorService = instructorService;
             _reviewService = reviewService;
+            _courseRepository = courseRepository;
         }
 
         public string AddNewCourse(Course course)
@@ -50,10 +54,11 @@ namespace Online_Learning_Platform.Service
 
             };
 
-            _allTheDbContext.Courses.Add(newCourse);
-            _allTheDbContext.SaveChanges(); 
-            
-            
+            //_allTheDbContext.Courses.Add(newCourse);
+            //_allTheDbContext.SaveChanges(); 
+            _courseRepository.SaveToCourseDb(newCourse);
+            _courseRepository.Save();
+                    
             return $"{newCourse.CourseName} is added";
 
 
@@ -62,28 +67,24 @@ namespace Online_Learning_Platform.Service
 
         public List<Course> GetAllCourses()
         {
-            List<Course> courses = _allTheDbContext.Courses.ToList();
+            List<Course> courses =_courseRepository.GetAllCourses();
             return courses;
         }
 
 
         public Course? GetCourseByCourseId(Guid courseId)
         {
-            var course = _allTheDbContext.Courses.Find(courseId);
+            var course = _courseRepository.FindCourseById(courseId);
             return course;
         }
 
 
         public string RemoveCourseById(Guid courseId)
         {
-            var course = _allTheDbContext.Courses
-                .Include(x => x.Instructors)
-                .Include(x => x.Reviews)
-                .Include(x => x.Enrollments)
-                .Include(x => x.Users)
-                .FirstOrDefault(x => x.CourseId == courseId);
+            var course = _courseRepository
+             .FindCourseByIdAndIncludeEnrollmentsAndUsersAndReviewsAndInstructors(courseId);
 
-            if(course==null)
+            if (course==null)
             {
                 return "Not Found";
             }
@@ -113,8 +114,10 @@ namespace Online_Learning_Platform.Service
             course.Users.Clear();
 
 
-            _allTheDbContext.Courses.Remove(course);
-            _allTheDbContext.SaveChanges();
+            //_allTheDbContext.Courses.Remove(course);
+            //_allTheDbContext.SaveChanges();
+            _courseRepository.DeleteCourse(course);
+            _courseRepository.Save();
 
             return "Course is successfully removed";
         }
@@ -122,7 +125,9 @@ namespace Online_Learning_Platform.Service
 
         public string UpdateCourseDetails(CourseDetailsUpdateDTO courseDetailsUpdateDto)
         {
-            var course = _allTheDbContext.Courses.Find(courseDetailsUpdateDto.CourseId);
+            var course = _courseRepository
+                .FindCourseById(courseDetailsUpdateDto.CourseId);
+
 
             if(course==null)
             {
@@ -163,7 +168,7 @@ namespace Online_Learning_Platform.Service
 
             _mapper.Map(courseDetailsUpdateDto, course);
 
-            _allTheDbContext.SaveChanges();
+            _courseRepository.Save();
 
             return "Courser details updated successfully";
         }
@@ -171,11 +176,8 @@ namespace Online_Learning_Platform.Service
 
         public int GetNoOfReviewsByCourseId(Guid courseId)
         {
-            var course = _allTheDbContext.Courses
-                .Include(e => e.Reviews)
-                .FirstOrDefault(e => e.CourseId==courseId);
-              
-
+            var course = _courseRepository
+                .FindCourseByIdAndIncludeReviews(courseId);
 
             if (course == null)
             {
@@ -187,11 +189,10 @@ namespace Online_Learning_Platform.Service
 
         public int GetNoOfEnrollmentsByCourseId(Guid courseId)
         {
-            var course = _allTheDbContext.Courses
-                .Include (e => e.Enrollments)
-                .FirstOrDefault(e => e.CourseId==courseId);
+            var course = _courseRepository
+                .FindCourseByIdAndIncludeEnrollments(courseId);
 
-            if(course == null)
+            if (course == null)
             {
                 throw new Exception("Course is not exist");
             }
@@ -202,10 +203,8 @@ namespace Online_Learning_Platform.Service
         public Tuple<List<string>,string>GetAllEnrollmentsByCourseId(Guid courseId)
         {
             // var course = _allTheDbContext.Courses.Find(courseId);
-            var course = _allTheDbContext.Courses
-                 .Include(e => e.Enrollments)
-                 .ThenInclude(e => e.User)
-                 .FirstOrDefault(x => x.CourseId == courseId);
+            var course = _courseRepository
+                .FindCourseByIdAndIncludeEnrollmentsAndIncludeUserFromEnrollmentTable(courseId);
 
             if (course==null)
             {

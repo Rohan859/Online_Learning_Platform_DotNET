@@ -4,18 +4,27 @@ using Online_Learning_Platform.AllDbContext;
 using Online_Learning_Platform.DTOs;
 using Online_Learning_Platform.Interfaces;
 using Online_Learning_Platform.Model;
+using Online_Learning_Platform.RepositoryInterface;
 
 namespace Online_Learning_Platform.Service
 {
     public class UserService : IUserService
     {
-        private readonly AllTheDbContext _theDbContext;
         private readonly IMapper _mapper;
+        private readonly IUserRepository _userRepository;
+        private readonly IEnrollmentService _enrollmentService;
+        private readonly IReviewService _reviewService;
 
-        public UserService(AllTheDbContext allTheDbContext, IMapper mapper)
+        public UserService( 
+            IMapper mapper,
+            IUserRepository userRepository,
+            IEnrollmentService enrollmentService,
+            IReviewService reviewService)
         {
-            _theDbContext = allTheDbContext;
             _mapper = mapper;
+            _userRepository = userRepository;
+            _enrollmentService = enrollmentService;
+            _reviewService = reviewService;
         }
 
         public string Register(UserRegistrationRequestDTO userRegistrationRequestDTO)
@@ -24,67 +33,59 @@ namespace Online_Learning_Platform.Service
             var user = _mapper.Map<User>(userRegistrationRequestDTO);
             user.UserId = Guid.NewGuid();
 
-            _theDbContext.Users.Add(user);
-            _theDbContext.SaveChanges();
+            //_theDbContext.Users.Add(user);
+            //_theDbContext.SaveChanges();
+            _userRepository.SaveToUsersDb(user);
+            _userRepository.Save();
 
             return $"User is registered in the database with id {user.UserId}";
         }
 
 
-        public string DeleteUserById(Guid id)
+        public string DeleteUserById(Guid userId)
         {
-            User? user = _theDbContext.Users.Find(id);
+            //find user and include the enrollments and reviews
+            User? user = _userRepository
+                .FindUserByIdAndIncludeReviewsAndEnrollments(userId);
 
             if (user == null)
             {
                 return"User is not found";
             }
 
+            //delete the list of enrollments - just unenroll them
+            foreach (var enrollment in user.Enrollments.ToList())
+            {
+                _enrollmentService.UnEnroll(enrollment.EnrollmentId);
+            }
 
-            _theDbContext.Users.Remove(user);
-            _theDbContext.SaveChanges();
+            //then just delete all the reviews
+            foreach (var review in user.Reviews.ToList())
+            {
+                _reviewService.DeleteReview(review.ReviewId);
+            }
 
-            return "Successfully deleted the user with id " + id;
+            _userRepository.RemoveUser(user);
+            _userRepository.Save();
+
+            return "Successfully deleted the user with id " + userId;
         }
 
 
         public string UpdateUserProfile(UserProfileUpdateRequestDTO userProfileUpdateRequestDTO)
         {
-            var user= _theDbContext.Users.Find(userProfileUpdateRequestDTO.UserId);
+            var user= _userRepository
+                .FindUserById(userProfileUpdateRequestDTO.UserId);
+
             if (user == null)
             {
                 return "Not Found";
             }
 
-            // var name = userProfileUpdateRequestDTO.UserName;
-            //var password = userProfileUpdateRequestDTO.Password;
-            // var mobile= userProfileUpdateRequestDTO.MobileNo;
-            // var email= userProfileUpdateRequestDTO.Email;
-
-            // if(name!=null)
-            // {
-            //     user.UserName= name;
-            // }
-
-            // if(password!=null)
-            // {
-            //     user.Password= password;
-            // }
-
-            // if(mobile!=null)
-            // {
-            //     user.MobileNo= mobile;
-            // }
-
-            // if (email!=null)
-            // {
-            //     user.Email= email;
-            // }
-
             _mapper.Map(userProfileUpdateRequestDTO, user);
 
             //_theDbContext.Users.Update(user);
-            _theDbContext.SaveChanges();
+            _userRepository.Save();
 
             return "User details got successfully updated";
         }
@@ -92,10 +93,8 @@ namespace Online_Learning_Platform.Service
 
         public List<Course> GetCourseListForUserById(Guid userId)
         {
-            var user = _theDbContext.Users
-                .Include(x => x.Enrollments)
-                .ThenInclude(x => x.Course)
-                .FirstOrDefault(x => x.UserId == userId);
+            var user = _userRepository
+                .FindUserByIdIncludeEnrollmentsAndCourses(userId);
 
             List<Course> courseList = user?.Enrollments
                 .Select(x => x.Course)
@@ -131,12 +130,10 @@ namespace Online_Learning_Platform.Service
 
         public int GetNoOfReviewsByUserId(Guid userId) 
         {
-            var user = _theDbContext.Users
-                .Include(u => u.Reviews)
-                .FirstOrDefault (u => u.UserId == userId);
+            var user = _userRepository.FindUserByIdIncludeReviews(userId);
 
 
-            if(user == null)
+            if (user == null)
             {
                 throw new Exception("User is not exist");
             }

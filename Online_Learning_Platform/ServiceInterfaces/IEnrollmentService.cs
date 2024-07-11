@@ -7,7 +7,7 @@ namespace Online_Learning_Platform.Interfaces
     {
         public string EnrollInACourse(Guid userId, Guid courseId);
         public string UnEnroll(Guid enrollmentId);
-        public string DeleteEnrollment(Guid enrollmentId);
+       // public string DeleteEnrollment(Guid enrollmentId);
         public List<Enrollment> TrackProgress(Progress progress);
     }
 }

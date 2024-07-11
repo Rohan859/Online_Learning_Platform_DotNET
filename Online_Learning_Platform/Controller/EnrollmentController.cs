@@ -50,16 +50,16 @@ namespace Online_Learning_Platform.Controller
         }
 
 
-        [HttpDelete("/deleteEnrollment")]
-        public ActionResult<string> DeleteEnrollment([FromQuery]Guid enrollmentId)
-        {
-            var res = _enrollmentService.DeleteEnrollment(enrollmentId);
+        //[HttpDelete("/deleteEnrollment")]
+        //public ActionResult<string> DeleteEnrollment([FromQuery]Guid enrollmentId)
+        //{
+        //    var res = _enrollmentService.DeleteEnrollment(enrollmentId);
 
-            if(res == "Not Found")
-            {
-                return NotFound(res);
-            }
-            return Ok(res);
-        }
+        //    if(res == "Not Found")
+        //    {
+        //        return NotFound(res);
+        //    }
+        //    return Ok(res);
+        //}
     }
 }

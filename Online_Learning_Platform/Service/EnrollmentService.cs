@@ -9,20 +9,19 @@ namespace Online_Learning_Platform.Service
 {
     public class EnrollmentService : IEnrollmentService
     {
-        private readonly AllTheDbContext _dbContext;
+       
        private readonly IEnrollmentRepository _enrollmentRepository;
        private readonly IUserRepository _userRepository;    
        private readonly ICourseRepository _courseRepository;
 
         public EnrollmentService(IEnrollmentRepository enrollmentRepository,
             IUserRepository userRepository,
-            ICourseRepository courseRepository,
-            AllTheDbContext allTheDbContext)
+            ICourseRepository courseRepository)
         {
            _enrollmentRepository = enrollmentRepository;
            _userRepository = userRepository;   
            _courseRepository = courseRepository;
-            _dbContext = allTheDbContext;
+           
         }
 
 
@@ -178,20 +177,20 @@ namespace Online_Learning_Platform.Service
         }
 
 
-        public string DeleteEnrollment(Guid enrollmentId)
-        {
-            var enrollment = _dbContext.Enrollments.Find(enrollmentId);
+        //public string DeleteEnrollment(Guid enrollmentId)
+        //{
+        //    var enrollment = _dbContext.Enrollments.Find(enrollmentId);
 
-            if(enrollment == null)
-            {
-                return "Not Found";
-            }
+        //    if(enrollment == null)
+        //    {
+        //        return "Not Found";
+        //    }
 
-            _dbContext.Enrollments.Remove(enrollment);
-            _dbContext.SaveChanges();
+        //    _dbContext.Enrollments.Remove(enrollment);
+        //    _dbContext.SaveChanges();
 
-            return "Successfully deleted the enrollment";
-        }
+        //    return "Successfully deleted the enrollment";
+        //}
 
 
         //List<Enrollment>GetAllTheEnrollments(Guid courseId)

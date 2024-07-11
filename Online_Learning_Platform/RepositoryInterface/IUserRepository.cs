@@ -6,5 +6,11 @@ namespace Online_Learning_Platform.RepositoryInterface
     {
         public User GetUserByUserIdAndIncludesEnrollmentsAndCourses(Guid userId);
         public void Save();
+        public void SaveToUsersDb(User user);
+        public User FindUserById(Guid userId);
+        public void RemoveUser(User user);
+        public User FindUserByIdAndIncludeReviewsAndEnrollments(Guid userId);
+        public User FindUserByIdIncludeEnrollmentsAndCourses(Guid userId);
+        public User FindUserByIdIncludeReviews(Guid userId);
     }
 }

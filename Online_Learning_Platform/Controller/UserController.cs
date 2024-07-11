@@ -40,9 +40,9 @@ namespace Online_Learning_Platform.Controller
 
 
         [HttpDelete("/deleteUser")]
-        public ActionResult<string> DeleteUserById([FromQuery] Guid id) 
+        public ActionResult<string> DeleteUserById([FromQuery] Guid userId) 
         {
-            string res=_userService.DeleteUserById(id);
+            string res=_userService.DeleteUserById(userId);
 
             if(res== "User is not found")
             {
