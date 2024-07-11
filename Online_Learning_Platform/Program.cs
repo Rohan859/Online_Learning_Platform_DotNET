@@ -44,8 +44,11 @@ builder.Services.AddScoped<IReviewService,ReviewService>();
 builder.Services.AddScoped<IEnrollmentRepository,EnrollmentRepository>();
 builder.Services.AddScoped<IUserRepository,UserRepository>();
 builder.Services.AddScoped<ICourseRepository,CourseRepository>();
+builder.Services.AddScoped<IInstructorRepository,InstructorRepository>();
+builder.Services.AddScoped<IReviewRepository,ReviewRepository>();
 
-//add profiles
+
+//added profiles
 builder.Services.AddAutoMapper(typeof(UserProfile));
 builder.Services.AddAutoMapper(typeof(ReviewProfile));
 builder.Services.AddAutoMapper(typeof(InstructorProfile));

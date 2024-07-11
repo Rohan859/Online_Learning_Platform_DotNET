@@ -5,18 +5,24 @@ using Online_Learning_Platform.DTOs;
 using Online_Learning_Platform.Enums;
 using Online_Learning_Platform.Interfaces;
 using Online_Learning_Platform.Model;
+using Online_Learning_Platform.RepositoryInterface;
 
 namespace Online_Learning_Platform.Service
 {
     public class InstructorService : IInstructorService
     {
-        private readonly AllTheDbContext _theDbContext;
         private readonly IMapper _mapper;
+        private readonly IInstructorRepository _instructorRepository;
+        private readonly ICourseRepository _courseRepository;
 
-        public InstructorService(AllTheDbContext context, IMapper mapper)
+        public InstructorService(
+            IMapper mapper,
+            IInstructorRepository instructorRepository,
+            ICourseRepository courseRepository)
         {
-            _theDbContext = context;
             _mapper = mapper;
+            _instructorRepository = instructorRepository;
+            _courseRepository = courseRepository;
         }
         public string Register(Instructor instructor)
         {
@@ -33,8 +39,10 @@ namespace Online_Learning_Platform.Service
                 Description = instructor.Description
             };
 
-            _theDbContext.Instructors.Add(newInstructor);   
-            _theDbContext.SaveChanges();
+            //_theDbContext.Instructors.Add(newInstructor);   
+            //_theDbContext.SaveChanges();
+            _instructorRepository.SaveToInstructorDb(newInstructor);
+            _instructorRepository.Save();
 
             return $"You have successfully registered and your id is {newInstructor.InstructorId}";
         }
@@ -42,47 +50,17 @@ namespace Online_Learning_Platform.Service
 
         public string updateInstructor(InstructorUpdateRequestDTO instructorUpdateRequestDTO)
         {
-            var instructor = _theDbContext.Instructors.Find(instructorUpdateRequestDTO.InstructorId);
+            var instructor = _instructorRepository
+                .FindInstructorById(instructorUpdateRequestDTO.InstructorId);
 
             if (instructor == null)
             {
                 return "Not Found";
             }
 
-            //var name=instructorUpdateRequestDTO.InstructorName;
-            //var email = instructorUpdateRequestDTO.Email;
-            //var password = instructorUpdateRequestDTO.Password;
-            ////var expert = instructorUpdateRequestDTO.Expertise;
-            //var description = instructorUpdateRequestDTO.Description;
-
-            //if(name!=null)
-            //{
-            //    instructor.InstructorName= name;
-            //}
-
-            //if(email!=null)
-            //{
-            //    instructor.Email= email;
-            //}
-
-            //if(password!=null)
-            //{
-            //    instructor.Password= password;
-            //}
-
-            ////if(expert!=null)
-            ////{
-            ////    instructor.Expertise= expert;
-            ////}
-
-            //if (description != null)
-            //{
-            //    instructor.Description= description;
-            //}
-
             _mapper.Map(instructorUpdateRequestDTO, instructor);
            
-            _theDbContext.SaveChanges ();
+            _instructorRepository.Save();
 
             return "changes updated";
         }
@@ -91,31 +69,33 @@ namespace Online_Learning_Platform.Service
 
         public string RemoveInstructor(Guid id)
         {
-            var instructor = _theDbContext.Instructors
-                .Include(e => e.Course)
-                .FirstOrDefault(e => e.InstructorId==id);
+            var instructor = _instructorRepository
+                .FindInstructorByIdAndIncludeCourse(id);
 
-            if(instructor == null)
+            if (instructor == null)
             {
                 return "Not Found";
             }
 
-            
-            if(instructor.Course!=null && instructor.Course.Instructors.Count!=0)
+            if(instructor.Course == null || instructor.Course.Instructors.Count == 0)
             {
-                instructor.Course.Instructors.Remove(instructor);
-                instructor.Course = null;
-            }
-            else
-            {
-                return "Either course is null or instructors list is empty";
-            }
-
-
-                _theDbContext.Instructors.Remove(instructor);
-                _theDbContext.SaveChanges();
+                //just delete the instructor 
+                //there is no course assigned to this instructor
+                _instructorRepository.DeleteInstructor(instructor);
+                _instructorRepository.Save();
 
                 return "Instructor is deleted successfully";
+            }
+
+            //now inside the course
+            //there is some instructor present
+            //in instructor list
+            //so remove the instructor from the instructor list
+            instructor.Course.Instructors.Remove(instructor);
+            _instructorRepository.DeleteInstructor(instructor);
+            _instructorRepository.Save();
+
+            return "Instructor is deleted successfully";
             
            
         }
@@ -123,16 +103,16 @@ namespace Online_Learning_Platform.Service
 
         public string AssignInstructor(Guid instructorId,Guid courseId)
         {
-            var instructor = _theDbContext.Instructors.Find (instructorId);
+            var instructor = _instructorRepository.FindInstructorById(instructorId);
             
-            if( instructor == null )
+            if(instructor == null)
             {
                 return "Instructor not found";
             }
 
-            var course =  _theDbContext.Courses.Find (courseId);
+            var course = _courseRepository.FindCourseById(courseId);
 
-            if( course == null )
+            if(course == null)
             {
                 return "Course not found";
             }
@@ -140,17 +120,16 @@ namespace Online_Learning_Platform.Service
             course.Instructors.Add (instructor);
            // instructor.Course= course;
 
-           _theDbContext.Courses.Update (course);
-            _theDbContext.SaveChanges();
+           //_theDbContext.Courses.Update (course);
+           _instructorRepository.Save();
 
             return $"{instructor.InstructorName} is assigned for {course.CourseName} course";
         }
 
         public int GetCountOfInstructorByCourseId(Guid courseId)
         {
-            var course = _theDbContext.Courses
-                .Include(e => e.Instructors)
-                .FirstOrDefault(e => e.CourseId == courseId);
+            var course =_courseRepository
+                .FindCourseByIdAndIncludeInstructors(courseId);
 
 
             if (course == null )
@@ -166,11 +145,10 @@ namespace Online_Learning_Platform.Service
 
         public List<Instructor>GetListOfInstructorsByCourseId(Guid courseId)
         {
-            List<Instructor>instructorList = _theDbContext.Instructors
-                .Where(x => x.CourseId == courseId)
-                .ToList();
-                
-            return instructorList;
+            List<Instructor>instructorList = _instructorRepository
+                .FindListOfInstructorsByCourseId(courseId);
+
+            return instructorList; 
         }
     }
 }

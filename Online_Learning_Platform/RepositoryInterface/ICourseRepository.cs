@@ -10,9 +10,11 @@ namespace Online_Learning_Platform.RepositoryInterface
         public void DeleteCourse(Course course);
         public List<Course> GetAllCourses();
         public Course? FindCourseById(Guid courseId);
+        public Course? FindCourseByIdAndIncludeInstructors(Guid courseId);
         public Course? FindCourseByIdAndIncludeEnrollmentsAndUsersAndReviewsAndInstructors(Guid courseId);
         public Course? FindCourseByIdAndIncludeReviews(Guid courseId);
         public Course? FindCourseByIdAndIncludeEnrollments(Guid courseId);
         public Course? FindCourseByIdAndIncludeEnrollmentsAndIncludeUserFromEnrollmentTable(Guid courseId);
+        public void LoadEnrollmentsFromCourse(Course course);
     }
 }

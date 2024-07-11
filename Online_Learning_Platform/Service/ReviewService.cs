@@ -4,31 +4,46 @@ using Online_Learning_Platform.AllDbContext;
 using Online_Learning_Platform.DTOs;
 using Online_Learning_Platform.Interfaces;
 using Online_Learning_Platform.Model;
+using Online_Learning_Platform.RepositoryInterface;
 
 namespace Online_Learning_Platform.Service
 {
     public class ReviewService : IReviewService
     {
-        private readonly AllTheDbContext _theDbContext;
+       
         private readonly IMapper _mapper;
+        private readonly IUserRepository _userRepository;
+        private readonly ICourseRepository _courseRepository;
+        private readonly IReviewRepository _reviewRepository;
 
-        public ReviewService(AllTheDbContext allTheDbContext,IMapper mapper)
+        public ReviewService(
+           
+            IMapper mapper,
+            IUserRepository userRepository,
+            ICourseRepository courseRepository,
+            IReviewRepository reviewRepository
+            )
         {
-            _theDbContext = allTheDbContext;
+            
             _mapper = mapper;
+            _userRepository = userRepository;
+            _courseRepository = courseRepository;
+            _reviewRepository = reviewRepository;
         }
 
         public string SubmitReview(ReviewRequestDTO reviewRequestDTO)
         {
             //1. find the user and course
             //2. validate them
-            var user = _theDbContext.Users.Find(reviewRequestDTO.UserId);
+            var user = _userRepository.FindUserById(reviewRequestDTO.UserId);
+
             if (user == null)
             {
                 return "User Not Found";
             }
 
-            var course = _theDbContext.Courses.Find(reviewRequestDTO.CourseId);
+            var course = _courseRepository.FindCourseById(reviewRequestDTO.CourseId);
+
             if (course == null)
             {
                 return "Course Not Found";
@@ -53,10 +68,10 @@ namespace Online_Learning_Platform.Service
             course.Reviews.Add(review);
 
             //4. save the review in db
-            _theDbContext.Reviews.Add(review);
+           _reviewRepository.SaveToReviewDb(review);
             //_theDbContext.Courses.Update(course);
             //_theDbContext.Users.Update(user);
-            _theDbContext.SaveChanges();
+            _reviewRepository.Save();
 
             return $"Review is successfully submitted by {user.UserName} for the {course.CourseName} course and review id is {review.ReviewId}";
 
@@ -65,7 +80,7 @@ namespace Online_Learning_Platform.Service
 
         public string UpdateReview(Guid reviewId,string description)
         {
-            var review = _theDbContext.Reviews.Find(reviewId);
+            var review = _reviewRepository.FindReviewById(reviewId);
 
             if(review == null)
             {
@@ -74,8 +89,8 @@ namespace Online_Learning_Platform.Service
 
             review.Description = description;
 
-            _theDbContext.Reviews.Update(review);
-            _theDbContext.SaveChanges();
+            //_theDbContext.Reviews.Update(review);
+            _reviewRepository.Save();
 
             return "Review is updated successfully";
         }
@@ -84,13 +99,11 @@ namespace Online_Learning_Platform.Service
         public string DeleteReview(Guid reviewId)
         {
             //first fetch the review
-            var review = _theDbContext.Reviews
-                .Include(e => e.User)
-                .Include(e => e.Course)
-                .FirstOrDefault(e =>  e.ReviewId == reviewId);
+            var review = _reviewRepository
+                .FindReviewByIdAndIncludeUserAndCourse(reviewId);
 
             //then validate it
-            if(review==null)
+            if (review==null)
             {
                 return "Review is not exist in our system";
             }
@@ -110,8 +123,8 @@ namespace Online_Learning_Platform.Service
             review.User = null;
 
             //delete this review
-            _theDbContext.Reviews.Remove(review);
-            _theDbContext.SaveChanges();
+            _reviewRepository.DeleteReview(review);
+            _reviewRepository.Save();
 
             return "Review is successfully deleted";
         }

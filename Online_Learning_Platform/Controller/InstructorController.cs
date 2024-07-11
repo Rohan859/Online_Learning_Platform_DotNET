@@ -98,6 +98,11 @@ namespace Online_Learning_Platform.Controller
             List<Instructor>instructors = _instructorService
                 .GetListOfInstructorsByCourseId(courseId) ;
 
+            if(instructors.Count==0)
+            {
+                return NotFound("No instructor found");
+            }
+
             return Ok(instructors);
         }
 

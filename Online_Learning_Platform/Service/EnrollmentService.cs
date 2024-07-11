@@ -14,7 +14,8 @@ namespace Online_Learning_Platform.Service
        private readonly IUserRepository _userRepository;    
        private readonly ICourseRepository _courseRepository;
 
-        public EnrollmentService(IEnrollmentRepository enrollmentRepository,
+        public EnrollmentService(
+            IEnrollmentRepository enrollmentRepository,
             IUserRepository userRepository,
             ICourseRepository courseRepository)
         {

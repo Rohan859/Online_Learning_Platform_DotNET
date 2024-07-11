@@ -13,5 +13,6 @@ namespace Online_Learning_Platform.RepositoryInterface
         public void Delete(Enrollment enrollment);
 
         public List<Enrollment> TrackProgress(Progress progress);
+        public int CountNoOfProgress(Progress progress);
     }
 }

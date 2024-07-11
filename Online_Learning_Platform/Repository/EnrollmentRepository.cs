@@ -20,6 +20,14 @@ namespace Online_Learning_Platform.Repository
             _dbContext.Enrollments.Add(enrollment);
         }
 
+        public int CountNoOfProgress(Progress progress)
+        {
+            var noOfOngoingCourses = _dbContext.Enrollments
+                .Count(e => e.Progress == progress);
+
+            return noOfOngoingCourses;
+        }
+
         public void Delete(Enrollment enrollment)
         {
             _dbContext.Enrollments.Remove(enrollment);

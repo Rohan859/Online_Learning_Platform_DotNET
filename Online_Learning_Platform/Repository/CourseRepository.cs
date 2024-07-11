@@ -56,6 +56,15 @@ namespace Online_Learning_Platform.Repository
             return course;
         }
 
+        public Course? FindCourseByIdAndIncludeInstructors(Guid courseId)
+        {
+            var course = _dbContext.Courses
+                 .Include(e => e.Instructors)
+                 .FirstOrDefault(e => e.CourseId == courseId);
+
+            return course;
+        }
+
         public Course? FindCourseByIdAndIncludeReviews(Guid courseId)
         {
             var course = _dbContext.Courses
@@ -79,6 +88,11 @@ namespace Online_Learning_Platform.Repository
                 .FirstOrDefault(e => e.CourseId == courseId);
 
             return course;
+        }
+
+        public void LoadEnrollmentsFromCourse(Course course)
+        {
+            _dbContext.Entry(course).Collection(c => c.Enrollments).Load();
         }
 
         public void Save()

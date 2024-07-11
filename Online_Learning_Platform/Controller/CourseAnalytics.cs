@@ -37,7 +37,7 @@ namespace Online_Learning_Platform.Controller
         [HttpGet("/countProgress")]
         public ActionResult<string> CountNoOfOngoingCourses([FromQuery]Progress progress)
         {
-            int ans = _courseAnalyticsService.CountNoOfOngoingCourses(progress);
+            int ans = _courseAnalyticsService.CountNoOfProgress(progress);
             return Ok($"Number of {progress} courses are {ans}");
         }
     }

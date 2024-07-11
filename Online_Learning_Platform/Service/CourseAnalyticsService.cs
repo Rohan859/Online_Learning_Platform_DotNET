@@ -2,23 +2,29 @@
 using Online_Learning_Platform.AllDbContext;
 using Online_Learning_Platform.Enums;
 using Online_Learning_Platform.Interfaces;
+using Online_Learning_Platform.RepositoryInterface;
 
 namespace Online_Learning_Platform.Service
 {
     public class CourseAnalyticsService : ICourseAnalyticsService
     {
-        private readonly AllTheDbContext _theDbContext;
+        
+        private readonly ICourseRepository _courseRepository;
+        private readonly IEnrollmentRepository _enrollmentRepository;
 
-        public CourseAnalyticsService(AllTheDbContext allTheDbContext)
+        public CourseAnalyticsService(
+            ICourseRepository courseRepository,
+            IEnrollmentRepository enrollmentRepository)
         {
-            _theDbContext = allTheDbContext;
+            
+            _courseRepository = courseRepository;
+            _enrollmentRepository = enrollmentRepository;
         }
 
         public decimal CalculateTotalRevenueByCourseId(Guid courseId)
         {
-            var course = _theDbContext.Courses
-                           .Include(c => c.Enrollments)
-                           .FirstOrDefault(c => c.CourseId == courseId);
+            var course = _courseRepository
+                .FindCourseByIdAndIncludeEnrollments(courseId);
 
 
             if (course == null)
@@ -27,18 +33,18 @@ namespace Online_Learning_Platform.Service
             }
 
             // Ensure Enrollments are loaded
-            _theDbContext.Entry(course).Collection(c => c.Enrollments).Load();
+            //_theDbContext.Entry(course).Collection(c => c.Enrollments).Load();
+            _courseRepository.LoadEnrollmentsFromCourse(course);
 
             return course.Enrollments.Count() * course.Price;
         }
 
 
-        public int CountNoOfOngoingCourses(Progress progress)
+        public int CountNoOfProgress(Progress progress)
         {
-            var noOfOngoingCourses = _theDbContext.Enrollments
-                .Count(e => e.Progress == progress);
+            var noOfCourses = _enrollmentRepository.CountNoOfProgress(progress);
 
-            return noOfOngoingCourses;
+            return noOfCourses;
         }
     }
 }

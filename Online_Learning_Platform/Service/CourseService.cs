@@ -204,7 +204,7 @@ namespace Online_Learning_Platform.Service
         {
             // var course = _allTheDbContext.Courses.Find(courseId);
             var course = _courseRepository
-                .FindCourseByIdAndIncludeEnrollmentsAndIncludeUserFromEnrollmentTable(courseId);
+              .FindCourseByIdAndIncludeEnrollmentsAndIncludeUserFromEnrollmentTable(courseId);
 
             if (course==null)
             {
