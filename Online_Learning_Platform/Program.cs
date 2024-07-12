@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Online_Learning_Platform.AllDbContext;
+using Online_Learning_Platform.Extension;
 using Online_Learning_Platform.Interfaces;
 using Online_Learning_Platform.Profiles;
 using Online_Learning_Platform.Repository;
@@ -33,27 +34,29 @@ builder.Services.AddDbContext<AllTheDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 //added scoped for services
-builder.Services.AddScoped<IUserService,UserService>();
-builder.Services.AddScoped<IInstructorService,InstructorService>();
-builder.Services.AddScoped<ICourseService,CourseService>();
-builder.Services.AddScoped<IEnrollmentService,EnrollmentService>();
-builder.Services.AddScoped<ICourseAnalyticsService,CourseAnalyticsService>();
-builder.Services.AddScoped<IReviewService,ReviewService>();
+//builder.Services.AddScoped<IUserService,UserService>();
+//builder.Services.AddScoped<IInstructorService,InstructorService>();
+//builder.Services.AddScoped<ICourseService,CourseService>();
+//builder.Services.AddScoped<IEnrollmentService,EnrollmentService>();
+//builder.Services.AddScoped<ICourseAnalyticsService,CourseAnalyticsService>();
+//builder.Services.AddScoped<IReviewService,ReviewService>();
+
+builder.Services.AddAllTheExtensions();
 
 
 //added scoped for repositories
-builder.Services.AddScoped<IEnrollmentRepository,EnrollmentRepository>();
-builder.Services.AddScoped<IUserRepository,UserRepository>();
-builder.Services.AddScoped<ICourseRepository,CourseRepository>();
-builder.Services.AddScoped<IInstructorRepository,InstructorRepository>();
-builder.Services.AddScoped<IReviewRepository,ReviewRepository>();
+//builder.Services.AddScoped<IEnrollmentRepository,EnrollmentRepository>();
+//builder.Services.AddScoped<IUserRepository,UserRepository>();
+//builder.Services.AddScoped<ICourseRepository,CourseRepository>();
+//builder.Services.AddScoped<IInstructorRepository,InstructorRepository>();
+//builder.Services.AddScoped<IReviewRepository,ReviewRepository>();
 
 
 //added profiles
-builder.Services.AddAutoMapper(typeof(UserProfile));
-builder.Services.AddAutoMapper(typeof(ReviewProfile));
-builder.Services.AddAutoMapper(typeof(InstructorProfile));
-builder.Services.AddAutoMapper(typeof(CourseProfile));
+//builder.Services.AddAutoMapper(typeof(UserProfile));
+//builder.Services.AddAutoMapper(typeof(ReviewProfile));
+//builder.Services.AddAutoMapper(typeof(InstructorProfile));
+//builder.Services.AddAutoMapper(typeof(CourseProfile));
 
 var app = builder.Build();
 
