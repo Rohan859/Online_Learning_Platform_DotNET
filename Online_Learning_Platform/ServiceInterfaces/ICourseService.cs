@@ -12,7 +12,7 @@ namespace Online_Learning_Platform.Interfaces
         public string UpdateCourseDetails(CourseDetailsUpdateDTO courseDetailsUpdateDto);
         public int GetNoOfReviewsByCourseId(Guid courseId);
         public int GetNoOfEnrollmentsByCourseId(Guid courseId);
-        public Tuple<List<string>, string> GetAllEnrollmentsByCourseId(Guid courseId);
+        public List<string> GetAllEnrollmentsByCourseId(Guid courseId);
 
     }
 }

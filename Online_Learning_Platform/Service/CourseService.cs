@@ -6,6 +6,8 @@ using Online_Learning_Platform.Enums;
 using Online_Learning_Platform.Interfaces;
 using Online_Learning_Platform.Model;
 using Online_Learning_Platform.RepositoryInterface;
+using Online_Learning_Platform.Validation;
+using System.Text;
 
 namespace Online_Learning_Platform.Service
 {
@@ -32,12 +34,39 @@ namespace Online_Learning_Platform.Service
             _courseRepository = courseRepository;
         }
 
+
+
+        private void CourseValidationChecking(Course course)
+        {
+            if (course == null)
+            {
+                throw new ArgumentNullException(nameof(course), "Course object cannot be null");
+            }
+
+            var validator = new CourseValidator();
+            var res = validator.Validate(course);
+
+            StringBuilder sb = new StringBuilder();
+
+            if (!res.IsValid)
+            {
+                foreach (var failure in res.Errors)
+                {
+                    Console.WriteLine(failure.ErrorMessage);
+                    sb.AppendLine(failure.ErrorMessage);
+                }
+                throw new Exception(sb.ToString());
+            }
+        }
+
         public string AddNewCourse(Course course)
         {
-            if(course == null)
-            {
-                return "Not Possible";
-            }
+            CourseValidationChecking(course);
+
+            //if (course == null)
+            //{
+            //    return "Not Possible";
+            //}
 
             //User user = _allTheDbContext.Users.Find(course.UserId); 
 
@@ -84,10 +113,12 @@ namespace Online_Learning_Platform.Service
             var course = _courseRepository
              .FindCourseByIdAndIncludeEnrollmentsAndUsersAndReviewsAndInstructors(courseId);
 
-            if (course==null)
-            {
-                return "Not Found";
-            }
+            //if (course==null)
+            //{
+            //    return "Not Found";
+            //}
+
+            CourseValidationChecking(course);
 
             //remove all the reviews
             foreach (var review in course.Reviews.ToList())
@@ -129,42 +160,11 @@ namespace Online_Learning_Platform.Service
                 .FindCourseById(courseDetailsUpdateDto.CourseId);
 
 
-            if(course==null)
-            {
-                return "Not Found";
-            }
-
-            //var courseName = courseDetails.CourseName;
-            //var description = courseDetails.CourseDescription;
-            //var startDate = courseDetails.StartDate;
-            //var endDate = courseDetails.EndDate;
-            //var price = courseDetails.Price;
-
-
-            //if(courseName!=null)
+            //if(course==null)
             //{
-            //    course.CourseName= courseName;
+            //    return "Not Found";
             //}
-
-            //if(description!=null)
-            //{
-            //    course.CourseDescription= description;
-            //}
-
-            //if(startDate!=new DateTime())
-            //{
-            //   course.StartDate=startDate;
-            //}
-
-            //if (endDate != new DateTime())
-            //{
-            //    course.EndDate = endDate;
-            //}
-
-            //if(price>0)
-            //{
-            //    course.Price= price;
-            //}
+            CourseValidationChecking(course);
 
             _mapper.Map(courseDetailsUpdateDto, course);
 
@@ -179,10 +179,11 @@ namespace Online_Learning_Platform.Service
             var course = _courseRepository
                 .FindCourseByIdAndIncludeReviews(courseId);
 
-            if (course == null)
-            {
-                throw new Exception("Course is not exist");
-            }
+            //if (course == null)
+            //{
+            //    throw new Exception("Course is not exist");
+            //}
+            CourseValidationChecking(course);
 
             return course.Reviews.Count;
         }
@@ -192,25 +193,28 @@ namespace Online_Learning_Platform.Service
             var course = _courseRepository
                 .FindCourseByIdAndIncludeEnrollments(courseId);
 
-            if (course == null)
-            {
-                throw new Exception("Course is not exist");
-            }
+            //if (course == null)
+            //{
+            //    throw new Exception("Course is not exist");
+            //}
+            CourseValidationChecking(course);
 
             return course.Enrollments.Count;
         }
 
-        public Tuple<List<string>,string>GetAllEnrollmentsByCourseId(Guid courseId)
+        public List<string>GetAllEnrollmentsByCourseId(Guid courseId)
         {
             // var course = _allTheDbContext.Courses.Find(courseId);
             var course = _courseRepository
               .FindCourseByIdAndIncludeEnrollmentsAndIncludeUserFromEnrollmentTable(courseId);
 
-            if (course==null)
-            {
-                //throw new Exception("Course does not exist");
-                return Tuple.Create<List<string>, string>(null, "Course does not exist");
-            }
+            CourseValidationChecking(course);
+
+            //if (course==null)
+            //{
+            //    //throw new Exception("Course does not exist");
+            //    return Tuple.Create<List<string>, string>(null, "Course does not exist");
+            //}
 
             //List<User>usersList = _allTheDbContext.StudentCourses
             //    .Include(x => x.User)
@@ -223,7 +227,8 @@ namespace Online_Learning_Platform.Service
 
             if(enrollments==null || enrollments.Count==0)
             {
-                return Tuple.Create<List<string>, string>(null, "No enrollments found");
+                //return Tuple.Create<List<string>, string>(null, "No enrollments found");
+                throw new Exception("No enrollments found");
             }
 
             //find the users from the enrollments
@@ -239,7 +244,8 @@ namespace Online_Learning_Platform.Service
             if(usersList.Count==0)
             {
                 //throw new Exception("No users found");
-                return Tuple.Create<List<string>, string>(null, "No users found");
+               // return Tuple.Create<List<string>, string>(null, "No users found");
+               throw new Exception("No users found");
             }
 
             List<string>names = new List<string>();
@@ -249,9 +255,10 @@ namespace Online_Learning_Platform.Service
                 names.Add(user.UserName!);
             }
 
-            //return names;
-            return Tuple.Create<List<string>, string>(names, "Users are found");
+            return names;
+            //return Tuple.Create<List<string>, string>(names, "Users are found");
         }
 
+        
     }
 }

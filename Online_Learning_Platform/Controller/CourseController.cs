@@ -23,14 +23,24 @@ namespace Online_Learning_Platform.Controller
         [HttpPost("/addNewCourse")]
         public ActionResult<string> AddNewCourse([FromBody]Course course)
         {
-            string res=_courseService.AddNewCourse(course);
-
-            if(res == "Not Possible")
+            string error = "";
+            try
             {
-                return BadRequest("please enter all the details about the course");
-            }
+                string res = _courseService.AddNewCourse(course);
 
-            return Ok(res);
+                if (res == "Not Possible")
+                {
+                    return BadRequest("please enter all the details about the course");
+                }
+
+                return Ok(res);
+            }
+            catch (Exception e)
+            {
+                error = e.Message;
+                Console.WriteLine(error);
+            }
+            return BadRequest(error);
         }
 
 
@@ -58,14 +68,20 @@ namespace Online_Learning_Platform.Controller
         [HttpDelete("/deleteCourseById")]
         public ActionResult<string>RemoveCourseById([FromQuery]Guid courseId)
         {
-            string res = _courseService.RemoveCourseById(courseId);
+            string error = "";
 
-            if( res == "Not Found")
+            try
             {
-                return NotFound("This course is not exist in the system");
-            }
+                string res = _courseService.RemoveCourseById(courseId);
 
-            return Ok(res);
+                return Ok(res);
+            }
+            catch (Exception e)
+            {
+                error = e.Message;
+                Console.WriteLine(error);
+            }
+            return BadRequest(error);
         }
 
 
@@ -73,14 +89,19 @@ namespace Online_Learning_Platform.Controller
         [HttpPut("/updateCourse")]
         public ActionResult<string> UpdateCourseDetails([FromBody]CourseDetailsUpdateDTO courseDetails)
         {
-            string res=_courseService.UpdateCourseDetails(courseDetails);
-
-            if(res== "Not Found")
+            string error = "";
+            try
             {
-                return NotFound("Course does not exist in our system");
-            }
+                string res = _courseService.UpdateCourseDetails(courseDetails);
 
-            return Ok(res);
+                return Ok(res);
+            }
+            catch (Exception e)
+            {
+                error = e.Message;
+                Console.WriteLine(error);
+            }
+            return BadRequest(error);
         }
 
 
@@ -118,24 +139,34 @@ namespace Online_Learning_Platform.Controller
         [HttpGet("/getListOfUserNameEnrolledByCourseId")]
         public ActionResult<List<string>> GetAllEnrollmentsByCourseId([FromQuery] Guid courseId)
         {
-            var ans = _courseService.GetAllEnrollmentsByCourseId(courseId);
-
-            if(ans.Item2 == "Course does not exist")
+            string error = "";
+            try
             {
-                return BadRequest(ans.Item2);
-            }
+                var ans = _courseService.GetAllEnrollmentsByCourseId(courseId);
+                return Ok(ans);
+                //if (ans.Item2 == "Course does not exist")
+                //{
+                //    return BadRequest(ans.Item2);
+                //}
 
-            if(ans.Item2 == "No enrollments found")
+                //if (ans.Item2 == "No enrollments found")
+                //{
+                //    return NotFound(ans.Item2);
+                //}
+
+                //if (ans.Item2 == "No users found")
+                //{
+                //    return NotFound(ans.Item2);
+                //}
+
+                //return Ok(ans.Item1);
+            }
+            catch (Exception e)
             {
-                return NotFound(ans.Item2);
+                error = e.Message;
+                Console.WriteLine(error);
             }
-
-            if (ans.Item2 == "No users found")
-            {
-                return NotFound(ans.Item2);
-            }
-
-            return Ok(ans.Item1);
+            return NotFound(error);
         }
     }
 }

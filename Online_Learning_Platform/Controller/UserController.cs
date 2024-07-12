@@ -31,8 +31,18 @@ namespace Online_Learning_Platform.Controller
         [HttpPost("/userRegister")]
         public ActionResult<string>Register([FromBody]UserRegistrationRequestDTO userRegistrationRequestDTO)
         {
-            string res=_userService.Register(userRegistrationRequestDTO);
-            return Ok(res);
+            string error = "";
+            try
+            {
+                string res = _userService.Register(userRegistrationRequestDTO);
+                return Ok(res);
+            }
+            catch (Exception e)
+            {
+                error = e.Message;
+                Console.WriteLine(e.Message);
+            }
+            return BadRequest(error);
         }
 
 

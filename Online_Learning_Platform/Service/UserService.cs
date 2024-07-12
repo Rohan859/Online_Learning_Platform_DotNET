@@ -5,6 +5,7 @@ using Online_Learning_Platform.DTOs;
 using Online_Learning_Platform.Interfaces;
 using Online_Learning_Platform.Model;
 using Online_Learning_Platform.RepositoryInterface;
+using Online_Learning_Platform.Validation;
 
 namespace Online_Learning_Platform.Service
 {
@@ -29,6 +30,17 @@ namespace Online_Learning_Platform.Service
 
         public string Register(UserRegistrationRequestDTO userRegistrationRequestDTO)
         {
+            var validator = new UserRegistrationValidator();
+            var res = validator.Validate(userRegistrationRequestDTO);
+
+            if(!res.IsValid)
+            {
+                foreach (var failure in res.Errors)
+                {
+                    Console.WriteLine(failure.ErrorMessage);
+                }
+                throw new Exception("User registraion failed, please enter the details in correct manner");
+            }
 
             var user = _mapper.Map<User>(userRegistrationRequestDTO);
             user.UserId = Guid.NewGuid();
