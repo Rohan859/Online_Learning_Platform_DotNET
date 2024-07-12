@@ -7,6 +7,8 @@
             services.AddCustomServices();
             services.AddCustomRepositories();
             services.AddCustomProfiles();
+            services.AddCustomSwagger();
+            services.AddCustomJsonOptions();
         }
     }
 }

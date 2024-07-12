@@ -6,6 +6,8 @@ using Online_Learning_Platform.Enums;
 using Online_Learning_Platform.Interfaces;
 using Online_Learning_Platform.Model;
 using Online_Learning_Platform.RepositoryInterface;
+using Online_Learning_Platform.Validation;
+using System.Text;
 
 namespace Online_Learning_Platform.Service
 {
@@ -26,7 +28,21 @@ namespace Online_Learning_Platform.Service
         }
         public string Register(Instructor instructor)
         {
-            
+            var validator = new InstructorValidator();
+            var res = validator.Validate(instructor);
+
+            StringBuilder sb = new StringBuilder();
+
+            if (!res.IsValid)
+            {
+                foreach (var failure in res.Errors)
+                {
+                    Console.WriteLine(failure.ErrorMessage);
+                    sb.AppendLine(failure.ErrorMessage);
+                }
+                throw new Exception(sb.ToString());
+            }
+
             Instructor newInstructor = new Instructor
             {
                 InstructorId = Guid.NewGuid(),

@@ -22,8 +22,18 @@ namespace Online_Learning_Platform.Controller
         [HttpPost("/instructorRegister")]
         public ActionResult<string>Register([FromBody]Instructor instructor)
         {
-            string res = _instructorService.Register(instructor);
-            return Ok(res);
+            string error = "";
+            try
+            {
+                string res = _instructorService.Register(instructor);
+                return Ok(res);
+            }
+            catch (Exception e)
+            {
+                error = e.Message;
+                Console.WriteLine(error);
+            }
+            return BadRequest(error);
         }
 
 
