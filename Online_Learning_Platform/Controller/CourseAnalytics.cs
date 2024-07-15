@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Online_Learning_Platform.DTOs.ResponseDTO;
 using Online_Learning_Platform.Enums;
 using Online_Learning_Platform.Interfaces;
 using Online_Learning_Platform.Service;
@@ -19,26 +20,50 @@ namespace Online_Learning_Platform.Controller
             _courseAnalyticsService = courseAnalyticsService;
         }
 
+
+        private ResponseDTO CreateCourseAnalyticsResponse(string message, string result)
+        {
+            var response = new ResponseDTO
+            {
+                Message = message,
+                Result = result
+
+            };
+            return response;
+        }
+
+
         [HttpGet("/getRevenueByCourseId")]
-        public ActionResult<string> CalculateTotalRevenueByCourseId([FromQuery]Guid courseId)
+        public ActionResult<ResponseDTO> CalculateTotalRevenueByCourseId([FromQuery]Guid courseId)
         {
            try
             {
                 var ans = _courseAnalyticsService.CalculateTotalRevenueByCourseId(courseId);
-                return Ok($"Total revenue is {ans}");
+
+                var response = CreateCourseAnalyticsResponse
+                    ("Revenue calculated for the course",
+                    $"Total revenue is {ans}");
+
+                return Ok(response);
             }
             catch(Exception e)
             {
-                Console.WriteLine("there is some issue - "+e.Message);
+                return NotFound(new {error = e.Message});
             }
-            return BadRequest("some error is there");
+            
         }
         
         [HttpGet("/countProgress")]
-        public ActionResult<string> CountNoOfOngoingCourses([FromQuery]Progress progress)
+        public ActionResult<ResponseDTO> CountNoOfOngoingCourses([FromQuery]Progress progress)
         {
             int ans = _courseAnalyticsService.CountNoOfProgress(progress);
-            return Ok($"Number of {progress} courses are {ans}");
+
+            var response = CreateCourseAnalyticsResponse
+                ("Counting the no of the course progress",
+                 $"Number of {progress} courses are {ans}"
+                );
+           
+            return Ok(response);
         }
     }
 }

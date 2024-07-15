@@ -12,8 +12,8 @@ using Online_Learning_Platform.AllDbContext;
 namespace Online_Learning_Platform.Migrations
 {
     [DbContext(typeof(AllTheDbContext))]
-    [Migration("20240707175429_AddedMg")]
-    partial class AddedMg
+    [Migration("20240715105234_AlmostCompleted")]
+    partial class AlmostCompleted
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

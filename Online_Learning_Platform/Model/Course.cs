@@ -5,7 +5,7 @@ namespace Online_Learning_Platform.Model
 {
     public class Course
     {
-        [Key]
+        
         public Guid CourseId { get; set; }
         public string? CourseName { get; set; }
         public string? CourseDescription { get; set; }

@@ -4,7 +4,7 @@ namespace Online_Learning_Platform.Model
 {
     public class User
     {
-        [Key]
+        
         public Guid UserId { get; set; }
 
         public string? UserName { get; set; }

@@ -5,7 +5,7 @@ namespace Online_Learning_Platform.Model
 {
     public class Instructor
     {
-        [Key]
+        
         public Guid InstructorId { get; set; }
 
         public string? InstructorName { get; set; }

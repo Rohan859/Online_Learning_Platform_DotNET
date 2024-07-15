@@ -125,7 +125,7 @@ namespace Online_Learning_Platform.Controller
         }
 
         [HttpGet("/getListOfInstructorsByCourseId")]
-        public ActionResult<List<Instructor>> GetListOfInstructorsByCourseId([FromQuery] Guid courseId)
+        public ActionResult<InstructorListResponseDTO> GetListOfInstructorsByCourseId([FromQuery] Guid courseId)
         {
             try
             {

@@ -105,6 +105,25 @@ namespace Online_Learning_Platform.AllDbContext
                 .HasMany(x => x.Users)
                 .WithMany(x => x.Courses);
 
+
+
+
+            //adding primary key 
+            modelBuilder.Entity<User>()
+                .HasKey(x => x.UserId);  //for user table
+
+            modelBuilder.Entity<Review>()
+                .HasKey(x => x.ReviewId); //for Review table
+
+            modelBuilder.Entity<Instructor>()
+                .HasKey(x => x.InstructorId); //for Instructor table
+
+            modelBuilder.Entity<Enrollment>()
+                .HasKey(x => x.EnrollmentId); //for Enrollment table
+
+            modelBuilder.Entity<Course>()
+                .HasKey(x => x.CourseId); //for Course table
+
         }
     }
 }

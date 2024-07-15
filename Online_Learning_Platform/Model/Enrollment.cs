@@ -5,7 +5,7 @@ namespace Online_Learning_Platform.Model
 {
     public class Enrollment
     {
-        [Key]
+       
         public Guid EnrollmentId { get; set; }
         public DateTime EnrollmentDate {  get; set; }
         public Progress Progress { get; set; }
