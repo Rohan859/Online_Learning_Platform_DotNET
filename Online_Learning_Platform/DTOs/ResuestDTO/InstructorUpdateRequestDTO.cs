@@ -1,6 +1,6 @@
 ﻿using Online_Learning_Platform.Enums;
 
-namespace Online_Learning_Platform.DTOs
+namespace Online_Learning_Platform.DTOs.ResuestDTO
 {
     public class InstructorUpdateRequestDTO
     {

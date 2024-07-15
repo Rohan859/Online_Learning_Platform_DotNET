@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Online_Learning_Platform.DTOs;
+using Online_Learning_Platform.DTOs.ResponseDTO;
+using Online_Learning_Platform.DTOs.ResuestDTO;
 using Online_Learning_Platform.Interfaces;
 using Online_Learning_Platform.Model;
 using Online_Learning_Platform.Service;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Online_Learning_Platform.Controller
 {
@@ -20,153 +22,180 @@ namespace Online_Learning_Platform.Controller
         }
 
 
-        [HttpPost("/addNewCourse")]
-        public ActionResult<string> AddNewCourse([FromBody]Course course)
+        private ResponseDTO CreateCourseResponse(string message, string result)
         {
-            string error = "";
+            var response = new ResponseDTO
+            {
+                Message = message,
+                Result = result
+
+            };
+            return response;
+        }
+
+
+        [HttpPost("/addNewCourse")]
+        public ActionResult<ResponseDTO> AddNewCourse([FromBody]Course course)
+        {         
             try
             {
                 string res = _courseService.AddNewCourse(course);
 
-                if (res == "Not Possible")
-                {
-                    return BadRequest("please enter all the details about the course");
-                }
+                var response = CreateCourseResponse("New Course Added", res);
 
-                return Ok(res);
+                return Ok(response);               
             }
             catch (Exception e)
             {
-                error = e.Message;
-                Console.WriteLine(error);
+                return BadRequest(new { error = e.Message});
             }
-            return BadRequest(error);
+            
         }
 
 
         [HttpGet("/getAllAvailableCourses")]
-        public ActionResult<List<Course>>GetAllCourses()
+        public ActionResult<CourseListResponseDTO> GetAllCourses()
         {
             var courseList = _courseService.GetAllCourses();
-            return Ok(courseList);
+
+            var response = new CourseListResponseDTO
+            {
+                Message = "All the available courses",
+                Courses = courseList
+            };
+
+            return Ok(response);
         }
 
         [HttpGet("/getCourseById")]
-        public ActionResult<Course> GetCourseByCourseId([FromQuery]Guid courseId)
+        public ActionResult<CourseResponseDTO> GetCourseByCourseId([FromQuery]Guid courseId)
         {
-            var course = _courseService.GetCourseByCourseId(courseId);
-
-            if(course == null)
+            try
             {
-                return NotFound($"this id {courseId} does not exist in our system");
-            }
+                var course = _courseService.GetCourseByCourseId(courseId);
 
-            return Ok(course);
+                var response = new CourseResponseDTO
+                {
+                    Message = "Successfully got the course from the db",
+                    Course = course
+                };
+
+                return Ok(response);
+            }
+            catch (Exception e)
+            {
+                return NotFound(new {error = e.Message});
+            }
         }
 
 
         [HttpDelete("/deleteCourseById")]
-        public ActionResult<string>RemoveCourseById([FromQuery]Guid courseId)
+        public ActionResult<ResponseDTO> RemoveCourseById([FromQuery]Guid courseId)
         {
-            string error = "";
 
             try
             {
                 string res = _courseService.RemoveCourseById(courseId);
 
-                return Ok(res);
+                var response = CreateCourseResponse("Deleted the course", res);
+
+                return Ok(response);
             }
             catch (Exception e)
             {
-                error = e.Message;
-                Console.WriteLine(error);
+                return BadRequest(new { error = e.Message });
             }
-            return BadRequest(error);
+           
         }
 
 
 
         [HttpPut("/updateCourse")]
-        public ActionResult<string> UpdateCourseDetails([FromBody]CourseDetailsUpdateDTO courseDetails)
+        public ActionResult<ResponseDTO> UpdateCourseDetails([FromBody]CourseDetailsUpdateDTO courseDetails)
         {
-            string error = "";
             try
             {
                 string res = _courseService.UpdateCourseDetails(courseDetails);
 
-                return Ok(res);
+                var response = CreateCourseResponse("Updated course", res);
+
+                return Ok(response);
+              
             }
             catch (Exception e)
             {
-                error = e.Message;
-                Console.WriteLine(error);
+                return BadRequest(new {error = e.Message});
             }
-            return BadRequest(error);
+            
         }
 
 
         [HttpGet("/getNoOfReviewsByCourseId")]
-        public ActionResult<string> GetNoOfReviewsByCourseId([FromQuery]Guid courseId)
+        public ActionResult<ResponseDTO> GetNoOfReviewsByCourseId([FromQuery]Guid courseId)
         {
            try
             {
                 var noOfReviews = _courseService.GetNoOfReviewsByCourseId(courseId);
-                return Ok($"No of reviews are : {noOfReviews}");
+
+                var response = CreateCourseResponse(
+                    "Getting no of reviews for the course",
+                    $"No of reviews are {noOfReviews}");
+
+                return Ok(response);              
             }
             catch (Exception e)
             {
-                Console.WriteLine("the error is "+e.Message);
+                return BadRequest(new {error = e.Message});
             }
-            return BadRequest("Course is not exist");
+           
         }
 
         [HttpGet("/getNoOfEnrollmentsByCourseId")]
-        public ActionResult<string> GetNoOfEnrollmentsByCourseId([FromQuery]Guid courseId)
+        public ActionResult<ResponseDTO> GetNoOfEnrollmentsByCourseId([FromQuery]Guid courseId)
         {
             try
             {
-                var noOfEnrollments = _courseService.GetNoOfEnrollmentsByCourseId(courseId);
-                return Ok($"The no of enrollments for this course are : {noOfEnrollments}");
+                var noOfEnrollments = _courseService
+                    .GetNoOfEnrollmentsByCourseId(courseId);
+
+
+                var response = CreateCourseResponse(
+                    "Getting no of enrollments for the course",
+                    $"No of enrollments are {noOfEnrollments}");
+
+                return Ok(response);
+
+                
             }
             catch(Exception e)
             {
-                Console.WriteLine("The error is "+e.Message);
+                return BadRequest(new { error = e.Message });
             }
 
-            return BadRequest("Course does not exist");
+            
         }
 
         [HttpGet("/getListOfUserNameEnrolledByCourseId")]
-        public ActionResult<List<string>> GetAllEnrollmentsByCourseId([FromQuery] Guid courseId)
-        {
-            string error = "";
+        public ActionResult<FetchEnrollmentDTO> GetAllEnrollmentsByCourseId([FromQuery] Guid courseId)
+        {      
             try
             {
                 var ans = _courseService.GetAllEnrollmentsByCourseId(courseId);
-                return Ok(ans);
-                //if (ans.Item2 == "Course does not exist")
-                //{
-                //    return BadRequest(ans.Item2);
-                //}
 
-                //if (ans.Item2 == "No enrollments found")
-                //{
-                //    return NotFound(ans.Item2);
-                //}
+                var response = new FetchEnrollmentDTO
+                {
+                    Message = "Fetching enrollments name",
+                    Names = ans
+                };
 
-                //if (ans.Item2 == "No users found")
-                //{
-                //    return NotFound(ans.Item2);
-                //}
-
-                //return Ok(ans.Item1);
+                return Ok(response);
+                
             }
             catch (Exception e)
             {
-                error = e.Message;
-                Console.WriteLine(error);
+                return NotFound(new {error = e.Message});
             }
-            return NotFound(error);
+           
         }
     }
 }

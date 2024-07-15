@@ -1,11 +1,12 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Online_Learning_Platform.AllDbContext;
-using Online_Learning_Platform.DTOs;
+using Online_Learning_Platform.DTOs.ResuestDTO;
 using Online_Learning_Platform.Interfaces;
 using Online_Learning_Platform.Model;
 using Online_Learning_Platform.RepositoryInterface;
 using Online_Learning_Platform.Validation;
+using System.Text;
 
 namespace Online_Learning_Platform.Service
 {
@@ -28,6 +29,9 @@ namespace Online_Learning_Platform.Service
             _reviewService = reviewService;
         }
 
+
+        
+
         public string Register(UserRegistrationRequestDTO userRegistrationRequestDTO)
         {
             var validator = new UserRegistrationValidator();
@@ -35,11 +39,14 @@ namespace Online_Learning_Platform.Service
 
             if(!res.IsValid)
             {
+                StringBuilder sb = new StringBuilder();
+
                 foreach (var failure in res.Errors)
                 {
-                    Console.WriteLine(failure.ErrorMessage);
+                    //Console.WriteLine(failure.ErrorMessage);
+                    sb.Append(failure.ErrorMessage +" ");
                 }
-                throw new Exception("User registraion failed, please enter the details in correct manner");
+                throw new Exception(sb.ToString());
             }
 
             var user = _mapper.Map<User>(userRegistrationRequestDTO);
@@ -62,7 +69,7 @@ namespace Online_Learning_Platform.Service
 
             if (user == null)
             {
-                return"User is not found";
+                throw new Exception("User is not found");
             }
 
             //delete the list of enrollments - just unenroll them
@@ -91,7 +98,7 @@ namespace Online_Learning_Platform.Service
 
             if (user == null)
             {
-                return "Not Found";
+                throw new Exception("Not Found");
             }
 
             _mapper.Map(userProfileUpdateRequestDTO, user);
@@ -105,10 +112,15 @@ namespace Online_Learning_Platform.Service
 
         public List<Course> GetCourseListForUserById(Guid userId)
         {
-            var user = _userRepository
+            User user = _userRepository
                 .FindUserByIdIncludeEnrollmentsAndCourses(userId);
 
-            List<Course> courseList = user?.Enrollments
+            if(user==null)
+            {
+                throw new Exception("User not found in our system");
+            }
+
+            List<Course> courseList = user.Enrollments
                 .Select(x => x.Course)
                 .Distinct()
                 .ToList()!;

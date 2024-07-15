@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Online_Learning_Platform.DTOs;
+using Online_Learning_Platform.DTOs.ResponseDTO;
+using Online_Learning_Platform.DTOs.ResuestDTO;
 using Online_Learning_Platform.Interfaces;
 using Online_Learning_Platform.Service;
 
@@ -19,43 +20,68 @@ namespace Online_Learning_Platform.Controller
         }
 
 
-        [HttpPost("/submitReview")]
-        public ActionResult<string> SubmitReview([FromBody]ReviewRequestDTO reviewRequestDTO)
+        private ResponseDTO CreateReviewResponse(string message, string result)
         {
-            var res = _reviewService.SubmitReview(reviewRequestDTO);
-
-            if(res == "User Not Found" || res == "Course Not Found")
+            var response = new ResponseDTO
             {
-                return NotFound(res);
+                Message = message,
+                Result = result
+
+            };
+            return response;
+        }
+
+
+        [HttpPost("/submitReview")]
+        public ActionResult<ResponseDTO> SubmitReview([FromBody]ReviewRequestDTO reviewRequestDTO)
+        {
+            try
+            {
+                var res = _reviewService.SubmitReview(reviewRequestDTO);
+
+                var response = CreateReviewResponse("Review Submitted", res);
+
+                return Ok(response);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new {error = e.Message});
             }
 
-            return Ok(res);
         }
 
         [HttpPut("/updateReview")]
-        public ActionResult<string> UpdateReview(Guid reviewId, string description)
+        public ActionResult<ResponseDTO> UpdateReview(Guid reviewId, string description)
         {
-            var res  = _reviewService.UpdateReview(reviewId,description);
-
-            if(res == "Review is not exist in our system")
+            try
             {
-                return NotFound(res);
-            }
+                var res = _reviewService.UpdateReview(reviewId, description);
 
-            return Ok(res);
+                var response = CreateReviewResponse("Review Updated", res);
+
+                return Ok(response);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new {error = e.Message});
+            }
         }
 
         [HttpDelete("/deleteReview")]
         public ActionResult<string> DeleteReview(Guid reviewId)
         {
-            var res = _reviewService?.DeleteReview(reviewId);
-
-            if( res == "Review is not exist in our system")
+            try
             {
-                return NotFound(res);
-            }
+                var res = _reviewService?.DeleteReview(reviewId);
 
-            return Ok(res);
+                var response = CreateReviewResponse("Review Deleted", res!);
+
+                return Ok(response);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new { error = e.Message});    
+            }
         }
     }
 }

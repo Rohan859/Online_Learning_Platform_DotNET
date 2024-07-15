@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Online_Learning_Platform.DTOs;
+using Online_Learning_Platform.DTOs.ResuestDTO;
 using Online_Learning_Platform.Enums;
 using Online_Learning_Platform.Model;
 

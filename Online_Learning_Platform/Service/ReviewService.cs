@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Online_Learning_Platform.AllDbContext;
-using Online_Learning_Platform.DTOs;
+using Online_Learning_Platform.DTOs.ResuestDTO;
 using Online_Learning_Platform.Interfaces;
 using Online_Learning_Platform.Model;
 using Online_Learning_Platform.RepositoryInterface;
@@ -39,14 +39,14 @@ namespace Online_Learning_Platform.Service
 
             if (user == null)
             {
-                return "User Not Found";
+                throw new Exception("User Not Found");
             }
 
             var course = _courseRepository.FindCourseById(reviewRequestDTO.CourseId);
 
             if (course == null)
             {
-                return "Course Not Found";
+                throw new Exception("Course Not Found");
             }
 
             //3. create new review with id 
@@ -84,7 +84,7 @@ namespace Online_Learning_Platform.Service
 
             if(review == null)
             {
-                return "Review is not exist in our system";
+                throw new Exception("Review is not exist in our system");
             }
 
             review.Description = description;
@@ -105,7 +105,7 @@ namespace Online_Learning_Platform.Service
             //then validate it
             if (review==null)
             {
-                return "Review is not exist in our system";
+                throw new Exception("Review is not exist in our system");
             }
 
             //find the user and course

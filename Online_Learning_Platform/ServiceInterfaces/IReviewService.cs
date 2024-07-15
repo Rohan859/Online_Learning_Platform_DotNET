@@ -1,4 +1,4 @@
-﻿using Online_Learning_Platform.DTOs;
+﻿using Online_Learning_Platform.DTOs.ResuestDTO;
 
 namespace Online_Learning_Platform.Interfaces
 {

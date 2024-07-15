@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Online_Learning_Platform.AllDbContext;
-using Online_Learning_Platform.DTOs;
+using Online_Learning_Platform.DTOs.ResponseDTO;
+using Online_Learning_Platform.DTOs.ResuestDTO;
 using Online_Learning_Platform.Interfaces;
 using Online_Learning_Platform.Model;
 using Online_Learning_Platform.Service;
@@ -26,23 +27,35 @@ namespace Online_Learning_Platform.Controller
         {
            return Ok("Welcome to Online Learning Platform");
         }
+
+        private ResponseDTO CreateUserResponse(string message,string result)
+        {
+            var response = new ResponseDTO
+            {
+                Message = message,
+                Result = result
+
+            };
+            return response;
+        }
         
 
         [HttpPost("/userRegister")]
-        public ActionResult<string>Register([FromBody]UserRegistrationRequestDTO userRegistrationRequestDTO)
+        public ActionResult<ResponseDTO> Register([FromBody]UserRegistrationRequestDTO userRegistrationRequestDTO)
         {
-            string error = "";
             try
             {
                 string res = _userService.Register(userRegistrationRequestDTO);
-                return Ok(res);
+
+                var response = CreateUserResponse("Registration Successful",res);
+                
+                return Ok(response);
             }
             catch (Exception e)
             {
-                error = e.Message;
                 Console.WriteLine(e.Message);
+                return BadRequest(new {error = e.Message});
             }
-            return BadRequest(error);
         }
 
 
@@ -50,66 +63,105 @@ namespace Online_Learning_Platform.Controller
 
 
         [HttpDelete("/deleteUser")]
-        public ActionResult<string> DeleteUserById([FromQuery] Guid userId) 
+        public ActionResult<ResponseDTO> DeleteUserById([FromQuery] Guid userId) 
         {
-            string res=_userService.DeleteUserById(userId);
-
-            if(res== "User is not found")
+            try
             {
-                return NotFound("User is not found");
+                string res = _userService.DeleteUserById(userId);
+
+                var response = CreateUserResponse("Deleted Successfully", res);
+                
+                return Ok(response);
             }
-            return Ok(res);
+            catch (Exception e)
+            {
+                return BadRequest(new {error = e.Message});
+            }
+
+            
         }
 
         [HttpPut("/updateUser")]
-        public ActionResult<string>UpdateUserProfile([FromBody]UserProfileUpdateRequestDTO userProfileUpdateRequestDTO)
+        public ActionResult<ResponseDTO> UpdateUserProfile([FromBody]UserProfileUpdateRequestDTO userProfileUpdateRequestDTO)
         {
-            string res=_userService.UpdateUserProfile(userProfileUpdateRequestDTO);
-
-            if(res== "Not Found")
+            try
             {
-                return NotFound("User is not found in our system"); 
+                string res = _userService.UpdateUserProfile(userProfileUpdateRequestDTO);
+
+                var response = CreateUserResponse("Updated Successfully", res);
+
+                return Ok(response);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new { error = e.Message });
             }
 
-            return Ok(res);
+           
         }
 
 
         [HttpGet("/getCourseListByUser")]
         public ActionResult<List<Course>> GetCourseListForUserById([FromQuery]Guid userId)
         {
-            var res = _userService.GetCourseListForUserById(userId);
-
-            if( res==null)
+            try
             {
-                return NotFound("User not found in our system");
+                var res = _userService.GetCourseListForUserById(userId);
+
+                var response = new CourseListResponseDTO
+                {
+                    Message = "Successfully got the courses",
+                    Courses = res
+                };
+
+                return Ok(response);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new { error = e.Message });
             }
 
-            return Ok(res);
         }
 
         [HttpGet("/countEnrollCoursesByUserId")]
-        public ActionResult<int> CountEnrollCoursesByUserId([FromQuery]Guid userId)
+        public ActionResult<ResponseDTO> CountEnrollCoursesByUserId([FromQuery]Guid userId)
         {
-            var res = _userService.CountEnrollCoursesByUserId(userId);
+            try
+            {
+                var res = _userService.CountEnrollCoursesByUserId(userId);
 
-            return Ok(res);
+                var response = CreateUserResponse("Getting number of enrollments",
+                    $"No of enrollments are {res}");
+
+                return Ok(response);
+
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new {error = e.Message});
+            }
+
+            
         }
 
         [HttpGet("/getNoOfReviewsByUserId")]
-        public ActionResult<string> GetNoOfReviewsByUserId([FromQuery] Guid userId)
+        public ActionResult<ResponseDTO> GetNoOfReviewsByUserId([FromQuery] Guid userId)
         {
             try
             {
                 int noOfReviews = _userService.GetNoOfReviewsByUserId(userId);
-                return Ok($"No of reviews are : {noOfReviews}");
+
+                var response = CreateUserResponse("Getting number of Reviews",
+                    $"No of reviews are {noOfReviews}");
+
+                return Ok(response);
             }
             catch (Exception e)
             {
-                Console.WriteLine("the error is "+e.Message);
+                return BadRequest(new {error = e.Message});
             }
 
-            return BadRequest("User is not exist");
+           
         }
 
         
