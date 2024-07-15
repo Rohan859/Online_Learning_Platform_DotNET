@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Online_Learning_Platform.DTOs.ResponseDTO;
 using Online_Learning_Platform.DTOs.ResuestDTO;
 using Online_Learning_Platform.Interfaces;
 using Online_Learning_Platform.Model;
@@ -19,101 +20,130 @@ namespace Online_Learning_Platform.Controller
             _instructorService = instructorService;
         }
 
-        [HttpPost("/instructorRegister")]
-        public ActionResult<string>Register([FromBody]Instructor instructor)
+        private ResponseDTO CreateInstructorResponse(string message, string result)
         {
-            string error = "";
+            var response = new ResponseDTO
+            {
+                Message = message,
+                Result = result
+
+            };
+            return response;
+        }
+
+        [HttpPost("/instructorRegister")]
+        public ActionResult<ResponseDTO> Register([FromBody]Instructor instructor)
+        {
             try
             {
                 string res = _instructorService.Register(instructor);
-                return Ok(res);
+
+                var response = CreateInstructorResponse("Successfully Registered", res);
+
+                return Ok(response);
             }
             catch (Exception e)
             {
-                error = e.Message;
-                Console.WriteLine(error);
+                return BadRequest(new {error = e.Message});
             }
-            return BadRequest(error);
+            
         }
 
 
         [HttpPut("/updateInstructor")]
-        public ActionResult<string> updateInstructor([FromBody]InstructorUpdateRequestDTO instructorUpdateRequestDTO)
+        public ActionResult<ResponseDTO> updateInstructor([FromBody]InstructorUpdateRequestDTO instructorUpdateRequestDTO)
         {
-            string res=_instructorService.updateInstructor(instructorUpdateRequestDTO);
-
-            if(res=="Not Found")
+            try
             {
-                return NotFound("Not Found");
+                string res = _instructorService.updateInstructor(instructorUpdateRequestDTO);
+
+                var response = CreateInstructorResponse("Successfully Updated", res);
+
+                return Ok(response);
             }
-            return Ok(res);
+            catch (Exception e)
+            {
+                return NotFound(new {error = e.Message});
+            }
         }
 
 
         [HttpDelete("/deleteInstructor")]
-        public ActionResult<string> DeleteInstructor([FromQuery]Guid id)
+        public ActionResult<ResponseDTO> DeleteInstructor([FromQuery]Guid id)
         {
-            string res=_instructorService.RemoveInstructor(id);
-            if(res=="Not Found")
+            try
             {
-                return NotFound("Instructor is not found");
-            }
+                string res = _instructorService.RemoveInstructor(id);
 
-            if(res == "Either course is null or instructors list is empty")
-            {
-                return BadRequest(res);
+                var response = CreateInstructorResponse("Successfully removed the instructor", res);
+
+                return Ok(response);
             }
-            return Ok(res);
+            catch (Exception e)
+            {
+                return NotFound(new {error = e.Message});
+
+            }
         }
 
 
         [HttpPost("/assignInstructorByCourseId")]
-        public ActionResult<string> AssignInstructor([FromQuery]Guid instructorId,[FromQuery]Guid courseId)
+        public ActionResult<ResponseDTO> AssignInstructor([FromQuery]Guid instructorId,[FromQuery]Guid courseId)
         {
-            string res = _instructorService.AssignInstructor(instructorId, courseId);
-
-            if(res== "Instructor not found")
+            try
             {
-                return NotFound(res);
-            }
+                string res = _instructorService.AssignInstructor(instructorId, courseId);
 
-            if (res == "Course not found")
+                var response = CreateInstructorResponse("Successfully assigned the instructor for the course", res);
+
+                return Ok(response);
+            }
+            catch (Exception e)
             {
-                return NotFound(res);
+                return NotFound(new {error = e.Message});
             }
-
-            return Ok(res);
         }
 
 
         [HttpGet("/noOfInstructorsByCourseId")]
-        public ActionResult<string>GetCountOfInstructorByCourseId([FromQuery]Guid courseId)
+        public ActionResult<ResponseDTO> GetCountOfInstructorByCourseId([FromQuery]Guid courseId)
         {
             try
             {
                 var ans = _instructorService.GetCountOfInstructorByCourseId(courseId);
-                return Ok($"No of instructor for the course is {ans}");
+
+                var response = CreateInstructorResponse
+                    ("Getting no of instructors for the course", 
+                    $"No of instructor for the course is {ans}");
+
+                return Ok(response);               
             }
             catch (Exception e)
             {
-                Console.WriteLine("there is some error - "+e.Message);
-            }
-
-            return BadRequest("Course is not exist");
+                return NotFound (new {error = e.Message});
+            }           
         }
 
         [HttpGet("/getListOfInstructorsByCourseId")]
-        public ActionResult<List<Instructor>> GetListOfInstructorsByCourseId([FromQuery]Guid courseId)
+        public ActionResult<List<Instructor>> GetListOfInstructorsByCourseId([FromQuery] Guid courseId)
         {
-            List<Instructor>instructors = _instructorService
-                .GetListOfInstructorsByCourseId(courseId) ;
-
-            if(instructors.Count==0)
+            try
             {
-                return NotFound("No instructor found");
-            }
+                List<Instructor> instructors = _instructorService
+               .GetListOfInstructorsByCourseId(courseId);
 
-            return Ok(instructors);
+                var response = new InstructorListResponseDTO
+                {
+                    Message = "Getting available list of instructor for the course",
+                    Instructors = instructors
+                };
+
+                return Ok(response);
+            }
+            catch (Exception e)
+            {
+                return NotFound(new {error = e.Message});
+            }
         }
 
         

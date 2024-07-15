@@ -26,7 +26,8 @@ namespace Online_Learning_Platform.Service
             _instructorRepository = instructorRepository;
             _courseRepository = courseRepository;
         }
-        public string Register(Instructor instructor)
+
+        public void ValidateInstructor(Instructor instructor)
         {
             var validator = new InstructorValidator();
             var res = validator.Validate(instructor);
@@ -42,6 +43,12 @@ namespace Online_Learning_Platform.Service
                 }
                 throw new Exception(sb.ToString());
             }
+        }
+
+
+        public string Register(Instructor instructor)
+        {
+            ValidateInstructor(instructor);
 
             Instructor newInstructor = new Instructor
             {
@@ -71,11 +78,14 @@ namespace Online_Learning_Platform.Service
 
             if (instructor == null)
             {
-                return "Not Found";
+                throw new Exception("Instructor Not Found");
             }
 
             _mapper.Map(instructorUpdateRequestDTO, instructor);
-           
+
+            ValidateInstructor(instructor);
+
+
             _instructorRepository.Save();
 
             return "changes updated";
@@ -90,7 +100,7 @@ namespace Online_Learning_Platform.Service
 
             if (instructor == null)
             {
-                return "Not Found";
+                throw new Exception("Instructor Not Found");
             }
 
             if(instructor.Course == null || instructor.Course.Instructors.Count == 0)
@@ -123,14 +133,14 @@ namespace Online_Learning_Platform.Service
             
             if(instructor == null)
             {
-                return "Instructor not found";
+                throw new Exception("Instructor not found");
             }
 
             var course = _courseRepository.FindCourseById(courseId);
 
             if(course == null)
             {
-                return "Course not found";
+                throw new Exception("Course not found");
             }
 
             course.Instructors.Add (instructor);
@@ -163,6 +173,12 @@ namespace Online_Learning_Platform.Service
         {
             List<Instructor>instructorList = _instructorRepository
                 .FindListOfInstructorsByCourseId(courseId);
+
+
+            if(instructorList.Count == 0)
+            {
+                throw new Exception("No instructor found");
+            }
 
             return instructorList; 
         }

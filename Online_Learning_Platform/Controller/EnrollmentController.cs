@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Online_Learning_Platform.DTOs.ResponseDTO;
+using Online_Learning_Platform.Enums;
 using Online_Learning_Platform.Interfaces;
+using Online_Learning_Platform.Model;
 using Online_Learning_Platform.Service;
 
 namespace Online_Learning_Platform.Controller
@@ -17,49 +20,59 @@ namespace Online_Learning_Platform.Controller
             _enrollmentService = service;
         }
 
+        private ResponseDTO CreateEnrollmentResponse(string message, string result)
+        {
+            var response = new ResponseDTO
+            {
+                Message = message,
+                Result = result
+
+            };
+            return response;
+        }
+
 
         [HttpPost("/enroll")]
-        public ActionResult<string> EnrollInACourse([FromQuery]Guid userId, [FromQuery]Guid courseId)
+        public ActionResult<ResponseDTO> EnrollInACourse([FromQuery]Guid userId, [FromQuery]Guid courseId)
         {
-            var res = _enrollmentService.EnrollInACourse(userId,courseId);
-
-            if(res == "User not found")
+            try
             {
-                return NotFound(res);
-            }
+                var res = _enrollmentService.EnrollInACourse(userId, courseId);
 
-            if (res == "Course not found")
+                var response = CreateEnrollmentResponse("Enrollment Successful", res);
+
+                return Ok(response);
+            }
+            catch (Exception e)
             {
-                return NotFound(res);
+                return NotFound(new { error = e.Message });
             }
-
-            return Ok(res);
         }
 
         [HttpDelete("/unenroll")]
         public ActionResult<string> UnEnroll([FromQuery]Guid enrollmentId)
         {
-            var res = _enrollmentService.UnEnroll(enrollmentId);
-
-            if (res == "enrollment not found")
+            try
             {
-                return NotFound(res);
-            }
+                var res = _enrollmentService.UnEnroll(enrollmentId);
 
-            return Ok(res);
+                var response = CreateEnrollmentResponse("Unenrollment Successful", res);
+
+                return Ok(response);
+            }
+            catch (Exception e)
+            {
+                return NotFound(new { error = e.Message });
+            }
         }
 
 
-        //[HttpDelete("/deleteEnrollment")]
-        //public ActionResult<string> DeleteEnrollment([FromQuery]Guid enrollmentId)
-        //{
-        //    var res = _enrollmentService.DeleteEnrollment(enrollmentId);
+        [HttpGet("/trackProgress")]
+        public ActionResult<List<Enrollment>> TrackProgress(Progress progress)
+        {
+            List<Enrollment>enrollments = _enrollmentService.TrackProgress(progress);
+            return Ok(enrollments);
+        }
 
-        //    if(res == "Not Found")
-        //    {
-        //        return NotFound(res);
-        //    }
-        //    return Ok(res);
-        //}
     }
 }

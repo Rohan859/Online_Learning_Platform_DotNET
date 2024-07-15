@@ -36,7 +36,7 @@ namespace Online_Learning_Platform.Service
 
             if (user == null)
             {
-                return "User not found";
+                throw new Exception("User not found");
             }
 
             var course = _courseRepository
@@ -44,7 +44,7 @@ namespace Online_Learning_Platform.Service
 
             if (course == null)
             {
-                return "Course not found";
+                throw new Exception("Course not found");
             }
 
 
@@ -55,7 +55,7 @@ namespace Online_Learning_Platform.Service
 
             if (isAlreadyEnrolled)
             {
-                return $"{user.UserName} is already enrolled in {course.CourseName} course";
+                throw new Exception($"{user.UserName} is already enrolled in {course.CourseName} course");
             }
 
 
@@ -110,7 +110,7 @@ namespace Online_Learning_Platform.Service
             // 2. Validate the enrollment
             if (enrollment == null)
             {
-                return "Enrollment not found";
+                throw new Exception("Enrollment not found");
             }
 
             // 3. Access the course and user from the enrollment
@@ -118,14 +118,14 @@ namespace Online_Learning_Platform.Service
 
             if (course == null)
             {
-                return "Course associated with enrollment is null";
+                throw new Exception("Course associated with enrollment is null");
             }
 
             var user = enrollment.User;
 
             if (user == null)
             {
-                return "User associated with course is null";
+                throw new Exception("User associated with course is null");
             }
 
             //var user = course.User;
