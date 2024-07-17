@@ -1,6 +1,10 @@
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
 using Online_Learning_Platform.AllDbContext;
 using Online_Learning_Platform.Extension;
+
 using Online_Learning_Platform.Interfaces;
 using Online_Learning_Platform.Profiles;
 using Online_Learning_Platform.Repository;
@@ -11,6 +15,7 @@ using System.Text.Json.Serialization;
 var builder = WebApplication.CreateBuilder(args);
 
 
+builder.Services.AddHttpClient();
 
 
 builder.Services.AddDbContext<AllTheDbContext>(options =>
@@ -21,7 +26,10 @@ builder.Services.AddAllTheExtensions();
 
 
 
+
 var app = builder.Build();
+
+
 
 
 // Middleware configuration
@@ -32,14 +40,16 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+// Register GlobalExceptionMiddleware as middleware
 
 
 // Add routing middleware
 app.UseRouting();
 
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapControllers();
-});
+//app.UseEndpoints(endpoints =>
+//{
+//    endpoints.MapControllers();
+//});
 
+app.MapControllers();
 app.Run();

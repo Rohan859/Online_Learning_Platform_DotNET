@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Online_Learning_Platform.AllDbContext;
 using Online_Learning_Platform.DTOs.ResponseDTO;
 using Online_Learning_Platform.DTOs.ResuestDTO;
+
 using Online_Learning_Platform.Interfaces;
 using Online_Learning_Platform.Model;
 using Online_Learning_Platform.Service;
@@ -54,11 +55,9 @@ namespace Online_Learning_Platform.Controller
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
-                return BadRequest(new {error = e.Message});
+                return BadRequest(new { error = e.Message });
             }
         }
-
-
 
 
 
