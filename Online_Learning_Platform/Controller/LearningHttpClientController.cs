@@ -16,10 +16,8 @@ namespace Online_Learning_Platform.Controller
         }
 
         [HttpGet("/fetch")]
-        public async Task<IActionResult> FetchAsync()
+        public async Task<List<string>> FetchAsync()
         {
-            
-
             HttpClient client = _httpClientFactory.CreateClient();
 
             HttpResponseMessage response = await client
@@ -27,14 +25,31 @@ namespace Online_Learning_Platform.Controller
 
             if (response.IsSuccessStatusCode)
             {
-                var result = await response.Content.ReadAsStringAsync();
-       
-                var jsonResult = JsonSerializer.Deserialize<dynamic>(result);
+                // Read and deserialize JSON response
+                using var responseStream = await response.Content.ReadAsStreamAsync();
+                var jsonDocument = await JsonDocument.ParseAsync(responseStream);
 
-                return Ok(jsonResult);
+                // List to store country names
+                List<string> countryNames = new List<string>();
+
+                // Navigate through the JSON structure
+                if (jsonDocument.RootElement.TryGetProperty("data", out var dataElement) && dataElement.ValueKind == JsonValueKind.Object)
+                {
+                    foreach (var countryProperty in dataElement.EnumerateObject())
+                    {
+                        var countryName = countryProperty.Value.GetProperty("country").GetString();
+                        countryNames.Add(countryName);
+                    }
+                }
+
+                return countryNames;
+            }
+            else
+            {
+                // Handle unsuccessful response
+                return null;
             }
 
-            return BadRequest(new { error = "Some error occurred" });
         }
     }
 }

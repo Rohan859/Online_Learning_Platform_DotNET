@@ -5,7 +5,7 @@ namespace Online_Learning_Platform.Interfaces
 {
     public interface IEnrollmentService
     {
-        public string EnrollInACourse(Guid userId, Guid courseId);
+        public string EnrollInACourse(Guid userId, Guid courseId,string countryName);
         public string UnEnroll(Guid enrollmentId);
        // public string DeleteEnrollment(Guid enrollmentId);
         public List<Enrollment> TrackProgress(Progress progress);

@@ -20,6 +20,13 @@ namespace Online_Learning_Platform.Repository
             _dbContext.Enrollments.Add(enrollment);
         }
 
+        public async Task AddToEnrollmentDbAsAsync(Enrollment enrollment)
+        {
+            await _dbContext.Enrollments.AddAsync(enrollment);
+            await _dbContext.SaveChangesAsync();
+
+        }
+
         public int CountNoOfProgress(Progress progress)
         {
             var noOfOngoingCourses = _dbContext.Enrollments
@@ -55,6 +62,11 @@ namespace Online_Learning_Platform.Repository
         public void Save()
         {
             _dbContext.SaveChanges();
+        }
+
+        public async Task SaveAsAsync()
+        {
+           await _dbContext.SaveChangesAsync();
         }
 
         public List<Enrollment> TrackProgress(Progress progress)

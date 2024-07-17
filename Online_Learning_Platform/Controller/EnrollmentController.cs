@@ -33,15 +33,19 @@ namespace Online_Learning_Platform.Controller
 
 
         [HttpPost("/enroll")]
-        public ActionResult<ResponseDTO> EnrollInACourse([FromQuery]Guid userId, [FromQuery]Guid courseId)
+        public ActionResult<ResponseDTO> EnrollInACourse(
+            [FromQuery]Guid userId, 
+            [FromQuery]Guid courseId,
+            [FromQuery] string countryName)
         {
             try
             {
-                var res = _enrollmentService.EnrollInACourse(userId, courseId);
+                var res = _enrollmentService.EnrollInACourse(userId, courseId,countryName);
 
                 var response = CreateEnrollmentResponse("Enrollment Successful", res);
 
                 return Ok(response);
+                //return Ok(res);
             }
             catch (Exception e)
             {

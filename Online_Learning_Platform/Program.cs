@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Online_Learning_Platform.AllDbContext;
 using Online_Learning_Platform.Extension;
 
@@ -19,7 +20,14 @@ builder.Services.AddHttpClient();
 
 
 builder.Services.AddDbContext<AllTheDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")),
+    ServiceLifetime.Scoped);
+
+
+//builder.Services.AddDbContext<AllTheDbContext>(options =>
+//    options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")),
+//    ServiceLifetime.Scoped);
+
 
 
 builder.Services.AddAllTheExtensions();

@@ -4,6 +4,7 @@ using Online_Learning_Platform.Enums;
 using Online_Learning_Platform.Interfaces;
 using Online_Learning_Platform.Model;
 using Online_Learning_Platform.RepositoryInterface;
+using System.Text.Json;
 
 namespace Online_Learning_Platform.Service
 {
@@ -14,82 +15,146 @@ namespace Online_Learning_Platform.Service
        private readonly IUserRepository _userRepository;    
        private readonly ICourseRepository _courseRepository;
 
+       private readonly IHttpClientFactory _httpClientFactory;
+       
+
         public EnrollmentService(
             IEnrollmentRepository enrollmentRepository,
             IUserRepository userRepository,
-            ICourseRepository courseRepository)
+            ICourseRepository courseRepository,
+            IHttpClientFactory httpClientFactory)
         {
            _enrollmentRepository = enrollmentRepository;
            _userRepository = userRepository;   
            _courseRepository = courseRepository;
-           
+           _httpClientFactory = httpClientFactory;
         }
 
 
-        public string EnrollInACourse(Guid userId,Guid courseId)
+        private bool IsPresentTheCountry(string countryName)
         {
-            //1. validate the user and course
-            //var user = _dbContext.Users.Find(userId);
-            var user = _userRepository
-                .GetUserByUserIdAndIncludesEnrollmentsAndCourses(userId);
 
-
-            if (user == null)
+            try
             {
-                throw new Exception("User not found");
+                // Create HttpClient instance
+                using HttpClient client = _httpClientFactory.CreateClient();
+
+                // Send synchronous GET request
+                HttpResponseMessage response = client.GetAsync("https://api.first.org/data/v1/countries").Result;
+
+                // Ensure the response is successful
+                response.EnsureSuccessStatusCode();
+
+                // Read and deserialize JSON response synchronously
+                using var responseStream = response.Content.ReadAsStreamAsync().Result;
+                using var jsonDocument = JsonDocument.ParseAsync(responseStream).Result;
+
+                // List to store country names
+                List<string> countryNames = new List<string>();
+
+                // Navigate through the JSON structure
+                if (jsonDocument.RootElement.TryGetProperty("data", out var dataElement) && dataElement.ValueKind == JsonValueKind.Object)
+                {
+                    foreach (var countryProperty in dataElement.EnumerateObject())
+                    {
+                        var nameOfCountry = countryProperty.Value.GetProperty("country").GetString();
+                        countryNames.Add(nameOfCountry);
+                    }
+                }
+
+                // Check if the provided country name is present in the list
+                bool isPresent = countryNames.Contains(countryName);
+
+                return isPresent;
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions as needed
+                Console.WriteLine($"An error occurred: {ex.Message}");
+                return false;
+            }
+        } 
+
+        public string EnrollInACourse(Guid userId,Guid courseId, string countryName)
+        {
+                //1. validate the user and course
+                //var user = _dbContext.Users.Find(userId);
+                var user = _userRepository
+                    .GetUserByUserIdAndIncludesEnrollmentsAndCourses(userId);
+
+
+                if (user == null)
+                {
+                    throw new Exception("User not found");
+                }
+
+                var course = _courseRepository
+                    .GetCourseByCourseIdAndIncludesEnrollmentsAndUsers(courseId);
+
+                if (course == null)
+                {
+                    throw new Exception("Course not found");
+                }
+
+
+                //check user is already enrolled
+                //in the same course or not
+                bool isAlreadyEnrolled = _enrollmentRepository
+                    .IsAlreadyEnrolled(userId, courseId);
+
+                if (isAlreadyEnrolled)
+                {
+                    throw new Exception($"{user.UserName} is already enrolled in {course.CourseName} course");
+                }
+
+
+            //check if country name is valid or not
+            bool isValidCountry = IsPresentTheCountry(countryName);
+
+            if (!isValidCountry)
+            {
+                throw new Exception("Country is not valid");
             }
 
-            var course = _courseRepository
-                .GetCourseByCourseIdAndIncludesEnrollmentsAndUsers(courseId);
 
-            if (course == null)
-            {
-                throw new Exception("Course not found");
-            }
+                //2. generate new enrollment id
+                var enrollment = new Enrollment();
+                enrollment.EnrollmentId = Guid.NewGuid();
 
+                //3. make the enrollment
+                enrollment.Progress = Enums.Progress.Ongoing;
+                enrollment.EnrollmentDate = DateTime.UtcNow;
 
-            //check user is already enrolled
-            //in the same course or not
-            bool isAlreadyEnrolled = _enrollmentRepository
-                .IsAlreadyEnrolled(userId, courseId);
-
-            if (isAlreadyEnrolled)
-            {
-                throw new Exception($"{user.UserName} is already enrolled in {course.CourseName} course");
-            }
+                //4. in user's course list add the new course
+                enrollment.Course = course;
+                enrollment.CourseId = courseId;
 
 
-            //2. generate new enrollment id
-            var enrollment = new Enrollment();
-            enrollment.EnrollmentId = Guid.NewGuid();
+                enrollment.User = user;
+                enrollment.UserId = userId;
 
-            //3. make the enrollment
-            enrollment.Progress = Enums.Progress.Ongoing;
-            enrollment.EnrollmentDate = DateTime.UtcNow;
+                user.Courses.Add(course);
 
-            //4. in user's course list add the new course
-            enrollment.Course=course;
-            enrollment.CourseId=courseId;
 
-            
-            enrollment.User = user;
-            enrollment.UserId = userId;
+                course.Users.Add(user);
 
-            user.Courses.Add(course);
 
-           
-            course.Users.Add(user);
-            
-           
-            course.Enrollments.Add(enrollment);
-            user.Enrollments.Add(enrollment);
+                course.Enrollments.Add(enrollment);
+                user.Enrollments.Add(enrollment);
 
             _enrollmentRepository.AddToEnrollmentDb(enrollment);
 
             _enrollmentRepository.Save();
 
 
+            //_enrollmentRepository.AddToEnrollmentDbAsAsync(enrollment);
+            //_enrollmentRepository.SaveAsAsync();
+
+
+
             return $"Your enrollment is successfull, enrollment id is {enrollment.EnrollmentId}";
+            
+           
         }
 
 

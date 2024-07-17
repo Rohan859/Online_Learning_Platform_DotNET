@@ -14,5 +14,8 @@ namespace Online_Learning_Platform.RepositoryInterface
 
         public List<Enrollment> TrackProgress(Progress progress);
         public int CountNoOfProgress(Progress progress);
+
+        public Task SaveAsAsync();
+        public Task AddToEnrollmentDbAsAsync(Enrollment enrollment);
     }
 }
