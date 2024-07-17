@@ -90,16 +90,17 @@ namespace Online_Learning_Platform.Controller
 
 
         [HttpDelete("/deleteCourseById")]
-        public ActionResult<ResponseDTO> RemoveCourseById([FromQuery]Guid courseId)
+        public ActionResult RemoveCourseById([FromQuery]Guid courseId)
         {
 
             try
             {
-                string res = _courseService.RemoveCourseById(courseId);
+                Task res = _courseService.RemoveCourseById(courseId);
 
-                var response = CreateCourseResponse("Deleted the course", res);
+                //var response = CreateCourseResponse("Deleted the course", res);
 
-                return Ok(response);
+                //return Ok(response);
+                return Ok(res);
             }
             catch (Exception e)
             {

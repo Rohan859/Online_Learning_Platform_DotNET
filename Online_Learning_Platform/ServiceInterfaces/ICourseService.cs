@@ -8,7 +8,7 @@ namespace Online_Learning_Platform.Interfaces
         public string AddNewCourse(Course course);
         public List<Course> GetAllCourses();
         public Course? GetCourseByCourseId(Guid courseId);
-        public string RemoveCourseById(Guid courseId);
+        public Task<string> RemoveCourseById(Guid courseId);
         public string UpdateCourseDetails(CourseDetailsUpdateDTO courseDetailsUpdateDto);
         public int GetNoOfReviewsByCourseId(Guid courseId);
         public int GetNoOfEnrollmentsByCourseId(Guid courseId);

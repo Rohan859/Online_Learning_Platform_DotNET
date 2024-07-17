@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace Online_Learning_Platform.Controller
 {
@@ -7,44 +8,33 @@ namespace Online_Learning_Platform.Controller
     [ApiController]
     public class LearningHttpClientController : ControllerBase
     {
-        private readonly IHttpClientFactory _clientFactory;
+        private readonly IHttpClientFactory _httpClientFactory;
 
         public LearningHttpClientController(IHttpClientFactory httpClientFactory)
         {
-            _clientFactory = httpClientFactory;
+            _httpClientFactory = httpClientFactory;
         }
 
         [HttpGet("/fetch")]
-        public async Task<IActionResult> GetAsync()
+        public async Task<IActionResult> FetchAsync()
         {
-            try
+            
+
+            HttpClient client = _httpClientFactory.CreateClient();
+
+            HttpResponseMessage response = await client
+                .GetAsync("https://api.first.org/data/v1/countries");
+
+            if (response.IsSuccessStatusCode)
             {
-                var client = _clientFactory.CreateClient();
+                var result = await response.Content.ReadAsStringAsync();
+       
+                var jsonResult = JsonSerializer.Deserialize<dynamic>(result);
 
-                // Send a GET request to the API endpoint
-                HttpResponseMessage response = await client
-                    .GetAsync("https://api.first.org/data/v1/countries");
-
-                // Check if the response is successful (status code 200-299)
-                if (response.IsSuccessStatusCode)
-                {
-                    // Read the content of the response
-                    string responseBody = await response.Content.ReadAsStringAsync();
-
-                    // Return the fetched data
-                    return Ok(responseBody);
-                }
-                else
-                {
-                    // Return appropriate status code and message
-                    return StatusCode((int)response.StatusCode, $"Failed to fetch data. Status code: {response.StatusCode}");
-                }
+                return Ok(jsonResult);
             }
-            catch (Exception ex)
-            {
-                // Return an error response with the exception message
-                return BadRequest($"Error: {ex.Message}");
-            }
+
+            return BadRequest(new { error = "Some error occurred" });
         }
     }
 }

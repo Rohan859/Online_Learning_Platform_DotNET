@@ -19,12 +19,15 @@ namespace Online_Learning_Platform.Service
         private readonly IReviewService _reviewService;
         private readonly ICourseRepository _courseRepository;
 
+        private readonly IHttpClientFactory _httpClientFactory;
+
         public CourseService(
             IMapper mapper,
             IEnrollmentService enrollmentService,
             IInstructorService instructorService,
             IReviewService reviewService,
-            ICourseRepository courseRepository)
+            ICourseRepository courseRepository,
+            IHttpClientFactory httpClientFactory)
         {
             
             _mapper = mapper;
@@ -32,10 +35,11 @@ namespace Online_Learning_Platform.Service
             _instructorService = instructorService;
             _reviewService = reviewService;
             _courseRepository = courseRepository;
+            _httpClientFactory = httpClientFactory;
         }
 
 
-
+        
         private void CourseValidationChecking(Course course)
         {
             if (course == null)
@@ -113,7 +117,7 @@ namespace Online_Learning_Platform.Service
         }
 
 
-        public string RemoveCourseById(Guid courseId)
+        public async Task<string> RemoveCourseById(Guid courseId)
         {
             var course = _courseRepository
              .FindCourseByIdAndIncludeEnrollmentsAndUsersAndReviewsAndInstructors(courseId);
@@ -140,7 +144,13 @@ namespace Online_Learning_Platform.Service
             // unenroll all the enrollments
             foreach (var enrollment in course.Enrollments.ToList())
             {
-                _enrollmentService.UnEnroll(enrollment.EnrollmentId);
+                //  _enrollmentService.UnEnroll(enrollment.EnrollmentId);
+                HttpClient client = _httpClientFactory.CreateClient();
+
+                string uri = $"http://localhost:8080/unenroll?enrollmentId={enrollment.EnrollmentId}";
+
+                HttpResponseMessage response = await client
+                    .GetAsync(uri);
             }
 
             
@@ -264,6 +274,6 @@ namespace Online_Learning_Platform.Service
             //return Tuple.Create<List<string>, string>(names, "Users are found");
         }
 
-        
+       
     }
 }
