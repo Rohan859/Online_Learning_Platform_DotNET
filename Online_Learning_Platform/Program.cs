@@ -8,6 +8,7 @@ using Online_Learning_Platform.Extension;
 
 using Online_Learning_Platform.Interfaces;
 using Online_Learning_Platform.Profiles;
+using Online_Learning_Platform.Reflection;
 using Online_Learning_Platform.Repository;
 using Online_Learning_Platform.RepositoryInterface;
 using Online_Learning_Platform.Service;
@@ -31,7 +32,8 @@ builder.Services.AddDbContext<AllTheDbContext>(options =>
 
 
 builder.Services.AddAllTheExtensions();
-
+builder.Services.AddScoped<DemoClass>();
+builder.Services.AddScoped<LearningReflection>();
 
 
 

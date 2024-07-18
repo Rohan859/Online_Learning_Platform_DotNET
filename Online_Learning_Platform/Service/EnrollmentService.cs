@@ -40,10 +40,10 @@ namespace Online_Learning_Platform.Service
                 using HttpClient client = _httpClientFactory.CreateClient();
 
                 // Send synchronous GET request
-                HttpResponseMessage response = client.GetAsync("https://api.first.org/data/v1/countries").Result;
+                HttpResponseMessage response = client
+                    .GetAsync("https://api.first.org/data/v1/countries").Result;
 
-                // Ensure the response is successful
-                response.EnsureSuccessStatusCode();
+              
 
                 // Read and deserialize JSON response synchronously
                 using var responseStream = response.Content.ReadAsStreamAsync().Result;
