@@ -43,6 +43,9 @@ builder.Services.AddScoped<DemoClass>(serviceProvider =>
 builder.Services.AddScoped<LearningReflection>();
 
 
+// Add IMemoryCache to services
+builder.Services.AddMemoryCache();
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin",

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Online_Learning_Platform.AllDbContext;
 using Online_Learning_Platform.Model;
 using Online_Learning_Platform.RepositoryInterface;
@@ -8,9 +9,12 @@ namespace Online_Learning_Platform.Repository
     public class InstructorRepository : IInstructorRepository
     {
         private readonly AllTheDbContext _theDbContext;
-        public InstructorRepository(AllTheDbContext allTheDbContext)
+        private readonly IMemoryCache _cache;
+        public InstructorRepository(AllTheDbContext allTheDbContext,
+            IMemoryCache cache)
         {
             _theDbContext = allTheDbContext;
+            _cache = cache;
         }
 
         public void DeleteInstructor(Instructor instructor)

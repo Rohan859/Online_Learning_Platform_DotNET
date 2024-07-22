@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Online_Learning_Platform.AllDbContext;
 using Online_Learning_Platform.Model;
 using Online_Learning_Platform.RepositoryInterface;
@@ -8,10 +9,13 @@ namespace Online_Learning_Platform.Repository
     public class CourseRepository : ICourseRepository
     {
         private readonly AllTheDbContext _dbContext;
+        private readonly IMemoryCache _cache;
 
-        public CourseRepository(AllTheDbContext allTheDbContext)
+        public CourseRepository(AllTheDbContext allTheDbContext,
+            IMemoryCache cache)
         {
             _dbContext = allTheDbContext;
+            _cache = cache;
         }
 
         public void DeleteCourse(Course course)
@@ -21,27 +25,58 @@ namespace Online_Learning_Platform.Repository
 
         public Course? FindCourseById(Guid courseId)
         {
-            var course = _dbContext.Courses.Find(courseId);
-            return course;
+            //var course = _dbContext.Courses.Find(courseId);
+            //return course;
+
+            return _cache.GetOrCreate($"Course_{courseId}", entry =>
+            {
+                entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5);
+
+                var course = _dbContext.Courses.Find(courseId);
+                return course;
+            });
         }
 
         public Course? FindCourseByIdAndIncludeEnrollments(Guid courseId)
         {
-            var course = _dbContext.Courses
+            return _cache.GetOrCreate($"Course_{courseId}", entry =>
+            {
+                entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5);
+
+                var course = _dbContext.Courses
                 .Include(e => e.Enrollments)
                 .FirstOrDefault(e => e.CourseId == courseId);
 
-            return course;
+                return course;
+            });
+
+            //var course = _dbContext.Courses
+            //    .Include(e => e.Enrollments)
+            //    .FirstOrDefault(e => e.CourseId == courseId);
+
+            //return course;
         }
 
         public Course? FindCourseByIdAndIncludeEnrollmentsAndIncludeUserFromEnrollmentTable(Guid courseId)
         {
-            var course = _dbContext.Courses
+
+            return _cache.GetOrCreate($"Course_{courseId}", entry =>
+            {
+                entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5);
+
+               var course = _dbContext.Courses
                 .Include(e => e.Enrollments)
                 .ThenInclude(e => e.User)
                 .FirstOrDefault(x => x.CourseId == courseId);
 
             return course;
+            });
+            //var course = _dbContext.Courses
+            //    .Include(e => e.Enrollments)
+            //    .ThenInclude(e => e.User)
+            //    .FirstOrDefault(x => x.CourseId == courseId);
+
+            //return course;
         }
 
         public Course? FindCourseByIdAndIncludeEnrollmentsAndUsersAndReviewsAndInstructors(Guid courseId)
@@ -67,16 +102,33 @@ namespace Online_Learning_Platform.Repository
 
         public Course? FindCourseByIdAndIncludeReviews(Guid courseId)
         {
-            var course = _dbContext.Courses
+            return _cache.GetOrCreate($"Course_{courseId}", entry =>
+            {
+                //cache is valid for 5 minutes only
+                entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5);
+
+                //search from db
+                var course = _dbContext.Courses
                 .Include(e => e.Reviews)
                 .FirstOrDefault(e => e.CourseId == courseId);
 
-            return course;
+                return course;
+
+            });          
         }
 
         public List<Course> GetAllCourses()
-        {
-            List<Course> courses = _dbContext.Courses.ToList();
+        {            
+            if(!_cache.TryGetValue<List<Course>>("AllCourses",out var courses))
+            {
+                courses = _dbContext.Courses.ToList();
+
+                var cacheEntryOptions = new MemoryCacheEntryOptions()
+                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(5));
+
+
+                _cache.Set("AllCourses",courses,cacheEntryOptions);
+            }
             return courses;
         }
 

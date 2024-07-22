@@ -11,5 +11,6 @@ namespace Online_Learning_Platform.Interfaces
         public List<Course> GetCourseListForUserById(Guid userId);
         public int CountEnrollCoursesByUserId(Guid userId);
         public int GetNoOfReviewsByUserId(Guid userId);
+        public User FindUserById(Guid userId);
     }
 }

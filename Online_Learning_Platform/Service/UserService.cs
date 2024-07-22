@@ -164,5 +164,16 @@ namespace Online_Learning_Platform.Service
             
             return user.Reviews.Count;
         }
+
+        public User FindUserById(Guid userId)
+        {
+            User? user = _userRepository.FindUserById(userId);
+
+            if (user==null)
+            {
+                throw new Exception("User not found");
+            }
+            return user;
+        }
     }
 }

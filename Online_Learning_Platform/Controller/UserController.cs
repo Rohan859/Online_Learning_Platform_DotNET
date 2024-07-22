@@ -164,6 +164,19 @@ namespace Online_Learning_Platform.Controller
            
         }
 
-        
+
+        [HttpGet("/getUserById")]
+        public ActionResult<User> FindUserById([FromQuery]Guid userId)
+        {
+            try
+            {
+                User user = _userService.FindUserById(userId);
+                return Ok(user);
+            }
+            catch(Exception e) 
+            {
+                return BadRequest(new { error = e.Message });
+            }
+        }
     }
 }
