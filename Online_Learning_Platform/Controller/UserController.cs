@@ -11,8 +11,9 @@ using UuidExtensions;
 
 namespace Online_Learning_Platform.Controller
 {
+
     [Route("api/[controller]")]
-    [ApiController]
+    [ApiController] 
     public class UserController : ControllerBase
     {
         //private readonly UserService _userService;

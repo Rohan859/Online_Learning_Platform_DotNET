@@ -32,15 +32,34 @@ builder.Services.AddDbContext<AllTheDbContext>(options =>
 
 
 builder.Services.AddAllTheExtensions();
-builder.Services.AddScoped<DemoClass>();
+builder.Services.AddScoped<DemoClass>(serviceProvider =>
+{
+    // Resolve the actual service instance needed by DemoClass
+    var serviceInstance = serviceProvider.GetService<ICourseService>(); // Adjust as per your actual service type
+
+    // Create an instance of DemoClass with the resolved service instance
+    return new DemoClass(serviceInstance);
+});
 builder.Services.AddScoped<LearningReflection>();
 
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin",
+        builder =>
+        {
+            builder.WithOrigins("http://127.0.0.1:3000/") // Replace with your frontend URL
+                   .WithOrigins("http://127.0.0.1:5500/")
+                    .AllowAnyHeader()
+                   .AllowAnyMethod();
+        });
+});
 
 
 var app = builder.Build();
 
 
-
+app.UseCors("AllowSpecificOrigin"); //cors
 
 // Middleware configuration
 if (app.Environment.IsDevelopment())
@@ -55,6 +74,7 @@ if (app.Environment.IsDevelopment())
 
 // Add routing middleware
 app.UseRouting();
+
 
 //app.UseEndpoints(endpoints =>
 //{

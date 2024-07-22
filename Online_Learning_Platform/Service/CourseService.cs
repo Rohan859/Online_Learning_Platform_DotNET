@@ -21,6 +21,7 @@ namespace Online_Learning_Platform.Service
 
         private readonly IHttpClientFactory _httpClientFactory;
 
+
         public CourseService(
             IMapper mapper,
             IEnrollmentService enrollmentService,
@@ -40,7 +41,7 @@ namespace Online_Learning_Platform.Service
 
 
         
-        private void CourseValidationChecking(Course course)
+        public void CourseValidationChecking(Course course)
         {
             if (course == null)
             {
@@ -274,6 +275,9 @@ namespace Online_Learning_Platform.Service
             //return Tuple.Create<List<string>, string>(names, "Users are found");
         }
 
-       
+        public void Hi()
+        {
+            Console.WriteLine("Hi Rohan! I am in Hi method in Course Service");
+        }
     }
 }
