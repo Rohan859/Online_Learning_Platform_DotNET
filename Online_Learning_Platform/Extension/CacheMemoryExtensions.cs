@@ -5,6 +5,7 @@
         public static void AddCustomCacheMemory(this IServiceCollection services)
         {
             services.AddMemoryCache();
+            services.AddOutputCache();
         }
     }
 }

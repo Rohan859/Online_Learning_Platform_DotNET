@@ -110,3 +110,9 @@ C:\Users\LENOVO\source\repos\Online_Learning_Platform\Online_Learning_Platform\b
 C:\Users\LENOVO\source\repos\Online_Learning_Platform\Online_Learning_Platform\bin\Debug\net8.0\System.Net.Http.Formatting.dll
 C:\Users\LENOVO\source\repos\Online_Learning_Platform\Online_Learning_Platform\bin\Debug\net8.0\Newtonsoft.Json.Bson.dll
 C:\Users\LENOVO\source\repos\Online_Learning_Platform\Online_Learning_Platform\bin\Debug\net8.0\System.Web.Cors.dll
+C:\Users\LENOVO\source\repos\Online_Learning_Platform\Online_Learning_Platform\bin\Debug\net8.0\Microsoft.Extensions.Caching.StackExchangeRedis.dll
+C:\Users\LENOVO\source\repos\Online_Learning_Platform\Online_Learning_Platform\bin\Debug\net8.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+C:\Users\LENOVO\source\repos\Online_Learning_Platform\Online_Learning_Platform\bin\Debug\net8.0\Microsoft.Extensions.Logging.Abstractions.dll
+C:\Users\LENOVO\source\repos\Online_Learning_Platform\Online_Learning_Platform\bin\Debug\net8.0\Microsoft.Extensions.Options.dll
+C:\Users\LENOVO\source\repos\Online_Learning_Platform\Online_Learning_Platform\bin\Debug\net8.0\Pipelines.Sockets.Unofficial.dll
+C:\Users\LENOVO\source\repos\Online_Learning_Platform\Online_Learning_Platform\bin\Debug\net8.0\StackExchange.Redis.dll

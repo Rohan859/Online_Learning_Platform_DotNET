@@ -14,6 +14,7 @@ using Online_Learning_Platform.RepositoryInterface;
 using Online_Learning_Platform.Service;
 using System.Text.Json.Serialization;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 
@@ -23,6 +24,9 @@ builder.Services.AddHttpClient();
 builder.Services.AddDbContext<AllTheDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")),
     ServiceLifetime.Scoped);
+
+//added distributed cache
+builder.Services.AddDistributedMemoryCache();
 
 
 //builder.Services.AddDbContext<AllTheDbContext>(options =>

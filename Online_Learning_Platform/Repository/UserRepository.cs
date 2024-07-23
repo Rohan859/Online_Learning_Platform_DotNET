@@ -1,8 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
+using Newtonsoft.Json;
 using Online_Learning_Platform.AllDbContext;
 using Online_Learning_Platform.Model;
 using Online_Learning_Platform.RepositoryInterface;
+using System.Text;
 
 namespace Online_Learning_Platform.Repository
 {
@@ -10,25 +13,50 @@ namespace Online_Learning_Platform.Repository
     {
         private readonly AllTheDbContext _dbContext;
         private readonly IMemoryCache _cache;
+        private readonly IDistributedCache _distributedCache;
 
         public UserRepository(AllTheDbContext allTheDbContext,
-            IMemoryCache cache)
+            IMemoryCache cache,
+            IDistributedCache distributedCache)
         {
             _dbContext = allTheDbContext;
             _cache = cache;
+            _distributedCache = distributedCache;
         }
 
         public User FindUserById(Guid userId)
-        {         
-            return _cache.GetOrCreate($"User_{userId}", entry =>
+        {
+            var cachedUserData = _distributedCache.Get($"User_{userId}");
+
+            if (cachedUserData != null)
             {
-                entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5);
+                var cachedUserJson = Encoding.UTF8.GetString(cachedUserData);
+                return JsonConvert.DeserializeObject<User>(cachedUserJson)!;
+            }
 
-                //db query if not available in cache
-                User? user = _dbContext.Users.Find(userId);
-                return user;
+            //if user not found then fetch from db
+            User? user = _dbContext.Users.Find(userId);
 
-            })!;
+            if (user != null)
+            {
+                var userJson = JsonConvert.SerializeObject(user);
+
+                var cacheOptions = new DistributedCacheEntryOptions()
+                .SetAbsoluteExpiration(TimeSpan.FromMinutes(5));
+
+                _distributedCache.Set($"User_{userId}",Encoding.UTF8.GetBytes(userJson), cacheOptions);
+            }
+            return user;
+
+            //return _cache.GetOrCreate($"User_{userId}", entry =>
+            //{
+            //    entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5);
+
+            //    //db query if not available in cache
+            //    User? user = _dbContext.Users.Find(userId);
+            //    return user;
+
+            //})!;
         }
 
         public User FindUserByIdAndIncludeReviewsAndEnrollments(Guid userId)
