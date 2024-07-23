@@ -10,6 +10,8 @@ namespace Online_Learning_Platform.RepositoryInterface
         public Instructor FindInstructorByIdAndIncludeCourse(Guid instructorId);
         public void DeleteInstructor(Instructor instructor);
         public List<Instructor> FindListOfInstructorsByCourseId(Guid courseId);
-       
+        public void UpdateInstructor(Instructor instructor);
+
+
     }
 }

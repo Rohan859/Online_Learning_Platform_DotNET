@@ -24,8 +24,17 @@ namespace Online_Learning_Platform.Repository
 
         public Instructor? FindInstructorById(Guid instructorId)
         {
-            var instructor = _theDbContext.Instructors.Find(instructorId);
-            return instructor;
+            return _cache.GetOrCreate($"Instructor_{instructorId}", entry =>
+            {
+                //cache is valid for only 5 minutes
+                entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5);
+
+                var instructor = _theDbContext.Instructors.Find(instructorId);
+
+                return instructor;
+            });
+            //var instructor = _theDbContext.Instructors.Find(instructorId);
+            //return instructor;
         }
 
         public Instructor? FindInstructorByIdAndIncludeCourse(Guid instructorId)
@@ -39,6 +48,7 @@ namespace Online_Learning_Platform.Repository
 
         public List<Instructor> FindListOfInstructorsByCourseId(Guid courseId)
         {
+
             List<Instructor> instructorList = _theDbContext.Instructors
                 .Where(x => x.CourseId == courseId)
                 .ToList();
@@ -56,6 +66,11 @@ namespace Online_Learning_Platform.Repository
             _theDbContext.Instructors.Add(instructor);
         }
 
+
+        public void UpdateInstructor(Instructor instructor)
+        {
+            _theDbContext.Instructors.Update(instructor);
+        }
 
     }
 }

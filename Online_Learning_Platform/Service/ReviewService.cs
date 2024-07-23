@@ -90,6 +90,7 @@ namespace Online_Learning_Platform.Service
             review.Description = description;
 
             //_theDbContext.Reviews.Update(review);
+            _reviewRepository.UpdateReview(review);
             _reviewRepository.Save();
 
             return "Review is updated successfully";

@@ -1,6 +1,7 @@
 ﻿
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Online_Learning_Platform.AllDbContext;
 using Online_Learning_Platform.Model;
 using Online_Learning_Platform.RepositoryInterface;
@@ -10,10 +11,13 @@ namespace Online_Learning_Platform.Repository
     public class ReviewRepository : IReviewRepository
     {
         private readonly AllTheDbContext _theDbContext;
+        private readonly IMemoryCache _cache;
 
-        public ReviewRepository(AllTheDbContext allTheDbContext)
+        public ReviewRepository(AllTheDbContext allTheDbContext,
+            IMemoryCache cache)
         {
             _theDbContext = allTheDbContext;
+            _cache = cache;
         }
 
         public void DeleteReview(Review review)
@@ -23,8 +27,16 @@ namespace Online_Learning_Platform.Repository
 
         public Review? FindReviewById(Guid reviewId)
         {
-            var review = _theDbContext.Reviews.Find(reviewId);
-            return review;
+            return _cache.GetOrCreate($"Review_{reviewId}", entry =>
+            {
+                //cache is valid only for 5 minutes
+                entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5);
+
+                var review = _theDbContext.Reviews.Find(reviewId);
+                return review;
+            });
+            //var review = _theDbContext.Reviews.Find(reviewId);
+            //return review;
         }
 
         public Review? FindReviewByIdAndIncludeUserAndCourse(Guid reviewId)
@@ -47,6 +59,9 @@ namespace Online_Learning_Platform.Repository
             _theDbContext.Reviews.Add(review);
         }
 
-
+        public void UpdateReview(Review review)
+        {
+            _theDbContext.Reviews.Update(review);
+        }
     }
 }

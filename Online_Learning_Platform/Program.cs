@@ -43,20 +43,8 @@ builder.Services.AddScoped<DemoClass>(serviceProvider =>
 builder.Services.AddScoped<LearningReflection>();
 
 
-// Add IMemoryCache to services
-builder.Services.AddMemoryCache();
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowSpecificOrigin",
-        builder =>
-        {
-            builder.WithOrigins("http://127.0.0.1:3000/") // Replace with your frontend URL
-                   .WithOrigins("http://127.0.0.1:5500/")
-                    .AllowAnyHeader()
-                   .AllowAnyMethod();
-        });
-});
+
 
 
 var app = builder.Build();

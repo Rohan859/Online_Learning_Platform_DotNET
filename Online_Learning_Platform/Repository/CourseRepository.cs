@@ -93,11 +93,22 @@ namespace Online_Learning_Platform.Repository
 
         public Course? FindCourseByIdAndIncludeInstructors(Guid courseId)
         {
-            var course = _dbContext.Courses
+            return _cache.GetOrCreate($"Course_{courseId}", entry =>
+            {
+                //cache is valid only for 5 minutes
+                entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5);
+
+                var course = _dbContext.Courses
                  .Include(e => e.Instructors)
                  .FirstOrDefault(e => e.CourseId == courseId);
 
-            return course;
+                return course;
+            });
+            //var course = _dbContext.Courses
+            //     .Include(e => e.Instructors)
+            //     .FirstOrDefault(e => e.CourseId == courseId);
+
+            //return course;
         }
 
         public Course? FindCourseByIdAndIncludeReviews(Guid courseId)

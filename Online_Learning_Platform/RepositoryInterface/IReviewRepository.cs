@@ -9,5 +9,6 @@ namespace Online_Learning_Platform.RepositoryInterface
         public void DeleteReview(Review review);
         public Review FindReviewById(Guid reviewId);
         public Review FindReviewByIdAndIncludeUserAndCourse(Guid reviewId);
+        public void UpdateReview(Review review);
     }
 }

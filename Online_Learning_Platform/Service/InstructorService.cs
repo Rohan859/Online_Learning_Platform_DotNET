@@ -85,7 +85,7 @@ namespace Online_Learning_Platform.Service
 
             ValidateInstructor(instructor);
 
-
+            _instructorRepository.UpdateInstructor(instructor);
             _instructorRepository.Save();
 
             return "changes updated";
