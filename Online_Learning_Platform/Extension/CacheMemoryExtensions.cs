@@ -6,6 +6,7 @@
         {
             services.AddMemoryCache();
             services.AddOutputCache();
+            services.AddDistributedMemoryCache();
         }
     }
 }

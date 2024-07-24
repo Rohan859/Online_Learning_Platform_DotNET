@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Online_Learning_Platform.AllDbContext;
 using Online_Learning_Platform.DTOs.ResponseDTO;
@@ -6,6 +7,7 @@ using Online_Learning_Platform.DTOs.ResuestDTO;
 
 using Online_Learning_Platform.Interfaces;
 using Online_Learning_Platform.Model;
+using Online_Learning_Platform.Security;
 using Online_Learning_Platform.Service;
 using UuidExtensions;
 
@@ -13,7 +15,8 @@ namespace Online_Learning_Platform.Controller
 {
 
     [Route("api/[controller]")]
-    [ApiController] 
+    [ApiController]
+    [BasicAuthentication]
     public class UserController : ControllerBase
     {
         //private readonly UserService _userService;
@@ -25,7 +28,7 @@ namespace Online_Learning_Platform.Controller
 
 
         [HttpGet("/")]
-        public ActionResult<string> Reply() 
+        public ActionResult<string> Reply()
         {
            return Ok("Welcome to Online Learning Platform");
         }

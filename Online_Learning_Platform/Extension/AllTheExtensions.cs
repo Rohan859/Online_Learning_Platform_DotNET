@@ -9,8 +9,9 @@
             services.AddCustomProfiles();
             services.AddCustomSwagger();
             services.AddCustomJsonOptions();
-            services.AddCustomCacheMemory();
             services.AddCustomCors();
+            services.AddCustomCacheMemory();
+            
         }
     }
 }

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +8,7 @@ using Online_Learning_Platform.AllDbContext;
 using Online_Learning_Platform.Extension;
 
 using Online_Learning_Platform.Interfaces;
+using Online_Learning_Platform.Model;
 using Online_Learning_Platform.Profiles;
 using Online_Learning_Platform.Reflection;
 using Online_Learning_Platform.Repository;
@@ -45,6 +47,21 @@ builder.Services.AddScoped<DemoClass>(serviceProvider =>
     return new DemoClass(serviceInstance);
 });
 builder.Services.AddScoped<LearningReflection>();
+
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin",
+
+        builder =>
+        {
+            builder.WithOrigins("http://127.0.0.1:3000/",
+                 "http://127.0.0.1:5500/")
+
+                    .AllowAnyHeader()
+                   .AllowAnyMethod();
+        });
+});
 
 
 
