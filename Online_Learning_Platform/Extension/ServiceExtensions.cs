@@ -1,5 +1,6 @@
 ﻿using Online_Learning_Platform.Interfaces;
 using Online_Learning_Platform.Service;
+using Online_Learning_Platform.ServiceInterfaces;
 
 namespace Online_Learning_Platform.Extension
 {
@@ -14,6 +15,7 @@ namespace Online_Learning_Platform.Extension
             services.AddScoped<IEnrollmentService, EnrollmentService>();
             services.AddScoped<ICourseAnalyticsService, CourseAnalyticsService>();
             services.AddScoped<IReviewService, ReviewService>();
+            services.AddScoped<IJwtService, JwtService>();
         }
     }
 }

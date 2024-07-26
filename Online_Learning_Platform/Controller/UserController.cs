@@ -9,6 +9,8 @@ using Online_Learning_Platform.Interfaces;
 using Online_Learning_Platform.Model;
 using Online_Learning_Platform.Security;
 using Online_Learning_Platform.Service;
+using Online_Learning_Platform.ServiceInterfaces;
+using System.Security.Claims;
 using UuidExtensions;
 
 namespace Online_Learning_Platform.Controller
@@ -16,18 +18,23 @@ namespace Online_Learning_Platform.Controller
 
     [Route("api/[controller]")]
     [ApiController]
-    [BasicAuthentication]
+    
     public class UserController : ControllerBase
     {
         //private readonly UserService _userService;
         private readonly IUserService _userService;
-        public UserController(IUserService userService)
+        private readonly IJwtService _jwtService;
+        public UserController(IUserService userService,
+            IJwtService jwtService)
         {
            _userService = userService;
+           _jwtService = jwtService;
         }
 
 
+
         [HttpGet("/")]
+        [Authorize]
         public ActionResult<string> Reply()
         {
            return Ok("Welcome to Online Learning Platform");
@@ -46,6 +53,7 @@ namespace Online_Learning_Platform.Controller
         
 
         [HttpPost("/userRegister")]
+        [AllowAnonymous]
         public ActionResult<ResponseDTO> Register([FromBody]UserRegistrationRequestDTO userRegistrationRequestDTO)
         {
             try
@@ -169,6 +177,7 @@ namespace Online_Learning_Platform.Controller
 
 
         [HttpGet("/getUserById")]
+        [Authorize]
         public ActionResult<User> FindUserById([FromQuery]Guid userId)
         {
             try
@@ -180,6 +189,35 @@ namespace Online_Learning_Platform.Controller
             {
                 return BadRequest(new { error = e.Message });
             }
+        }
+
+
+        [HttpPost("/login")]
+        [AllowAnonymous]
+        public IActionResult Login([FromBody] LoginRequestDTO loginRequestDTO)
+        {
+            User user = _userService.IsUserExistByEmail(loginRequestDTO.Email)!;
+
+            if(user == null)
+            {
+                return Unauthorized("Wrong credential");
+            }
+
+            if (user.Password != loginRequestDTO.Password)
+            {
+                return Unauthorized("Wrong credential");
+            }
+
+            //make claims
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Email, loginRequestDTO.Email)         
+            };
+
+            //generate token
+            var token = _jwtService.GenerateToken(claims);
+
+            return Ok(new {token = token });
         }
     }
 }

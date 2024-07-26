@@ -27,8 +27,7 @@ builder.Services.AddDbContext<AllTheDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")),
     ServiceLifetime.Scoped);
 
-//added distributed cache
-builder.Services.AddDistributedMemoryCache();
+
 
 
 //builder.Services.AddDbContext<AllTheDbContext>(options =>
@@ -36,36 +35,19 @@ builder.Services.AddDistributedMemoryCache();
 //    ServiceLifetime.Scoped);
 
 
+//added all the extensions
+builder.Services.AddAllTheExtensions(builder.Configuration);
 
-builder.Services.AddAllTheExtensions();
+
 builder.Services.AddScoped<DemoClass>(serviceProvider =>
 {
     // Resolve the actual service instance needed by DemoClass
     var serviceInstance = serviceProvider.GetService<ICourseService>(); // Adjust as per your actual service type
 
     // Create an instance of DemoClass with the resolved service instance
-    return new DemoClass(serviceInstance);
+    return new DemoClass(serviceInstance!);
 });
 builder.Services.AddScoped<LearningReflection>();
-
-
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowSpecificOrigin",
-
-        builder =>
-        {
-            builder.WithOrigins("http://127.0.0.1:3000/",
-                 "http://127.0.0.1:5500/")
-
-                    .AllowAnyHeader()
-                   .AllowAnyMethod();
-        });
-});
-
-
-
-
 
 
 var app = builder.Build();
@@ -81,11 +63,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// Register GlobalExceptionMiddleware as middleware
 
 
 // Add routing middleware
 app.UseRouting();
+//auth
+app.UseAuthentication();
+app.UseAuthorization();
 
 
 //app.UseEndpoints(endpoints =>
@@ -94,4 +78,5 @@ app.UseRouting();
 //});
 
 app.MapControllers();
+
 app.Run();

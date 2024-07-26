@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Online_Learning_Platform.AllDbContext;
 using Online_Learning_Platform.DTOs.ResuestDTO;
@@ -22,13 +23,17 @@ namespace Online_Learning_Platform.Service
         private readonly IHttpClientFactory _httpClientFactory;
 
 
+       
+
+
         public CourseService(
             IMapper mapper,
             IEnrollmentService enrollmentService,
             IInstructorService instructorService,
             IReviewService reviewService,
             ICourseRepository courseRepository,
-            IHttpClientFactory httpClientFactory)
+            IHttpClientFactory httpClientFactory
+            )
         {
             
             _mapper = mapper;
@@ -37,6 +42,7 @@ namespace Online_Learning_Platform.Service
             _reviewService = reviewService;
             _courseRepository = courseRepository;
             _httpClientFactory = httpClientFactory;
+           
         }
 
 

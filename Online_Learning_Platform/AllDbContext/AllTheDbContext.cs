@@ -33,6 +33,7 @@ namespace Online_Learning_Platform.AllDbContext
             modelBuilder.ApplyConfiguration(new InstructorConfiguration());
             modelBuilder.ApplyConfiguration(new ReviewConfiguration());
 
+
         }
     }
 }

@@ -12,5 +12,6 @@ namespace Online_Learning_Platform.Interfaces
         public int CountEnrollCoursesByUserId(Guid userId);
         public int GetNoOfReviewsByUserId(Guid userId);
         public User FindUserById(Guid userId);
+        public User? IsUserExistByEmail(string email);
     }
 }

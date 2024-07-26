@@ -132,5 +132,13 @@ namespace Online_Learning_Platform.Repository
         {
             _dbContext.Users.Add(user);
         }
+
+        public User? FindUserByEmail(string email)
+        {
+            User? user = _dbContext.Users
+                .FirstOrDefault(u => u.Email == email);
+
+            return user;
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Online_Learning_Platform.Roles;
+using System.ComponentModel.DataAnnotations;
 
 namespace Online_Learning_Platform.Model
 {
@@ -21,5 +22,7 @@ namespace Online_Learning_Platform.Model
 
 
         public List<Enrollment>Enrollments { get; set; } =new List<Enrollment>();
+
+       
     }
 }

@@ -2,7 +2,8 @@
 {
     public static class AllTheExtensions
     {
-        public static void AddAllTheExtensions(this IServiceCollection services)
+        public static void AddAllTheExtensions(this IServiceCollection services,
+            IConfiguration configuration)
         {
             services.AddCustomServices();
             services.AddCustomRepositories();
@@ -11,7 +12,7 @@
             services.AddCustomJsonOptions();
             services.AddCustomCors();
             services.AddCustomCacheMemory();
-            
+            services.AddJwtBearer(configuration);
         }
     }
 }

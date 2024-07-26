@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Online_Learning_Platform.AllDbContext;
 using Online_Learning_Platform.DTOs.ResuestDTO;
 using Online_Learning_Platform.Interfaces;
@@ -10,6 +11,7 @@ using System.Text;
 
 namespace Online_Learning_Platform.Service
 {
+    
     public class UserService : IUserService
     {
         private readonly IMapper _mapper;
@@ -17,16 +19,22 @@ namespace Online_Learning_Platform.Service
         private readonly IEnrollmentService _enrollmentService;
         private readonly IReviewService _reviewService;
 
+       // private readonly JwtService _jwtService;
+        private readonly IConfiguration _configuration;
+
         public UserService( 
             IMapper mapper,
             IUserRepository userRepository,
             IEnrollmentService enrollmentService,
-            IReviewService reviewService)
+            IReviewService reviewService,
+            IConfiguration configuration)
         {
             _mapper = mapper;
             _userRepository = userRepository;
             _enrollmentService = enrollmentService;
             _reviewService = reviewService;
+           // _jwtService = jwtService;
+            _configuration = configuration;
         }
 
 
@@ -57,7 +65,12 @@ namespace Online_Learning_Platform.Service
             _userRepository.SaveToUsersDb(user);
             _userRepository.Save();
 
-            return $"User is registered in the database with id {user.UserId}";
+
+          
+
+
+
+            return $"User is registered in the database with id {user.UserId} and the toke is - ";
         }
 
 
@@ -175,5 +188,16 @@ namespace Online_Learning_Platform.Service
             }
             return user;
         }
+
+
+        public User? IsUserExistByEmail(string email)
+        {
+            User? user = _userRepository.FindUserByEmail(email);
+
+            return user;
+        }
+
+
+       
     }
 }
