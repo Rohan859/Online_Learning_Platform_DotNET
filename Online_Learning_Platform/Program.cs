@@ -29,7 +29,6 @@ builder.Services.AddDbContext<AllTheDbContext>(options =>
 
 
 
-
 //builder.Services.AddDbContext<AllTheDbContext>(options =>
 //    options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")),
 //    ServiceLifetime.Scoped);

@@ -72,5 +72,12 @@ namespace Online_Learning_Platform.Repository
             _theDbContext.Instructors.Update(instructor);
         }
 
+        public Instructor? FindInstructorByEmail(string email)
+        {
+            Instructor? instructor = _theDbContext.Instructors
+                .FirstOrDefault(u => u.Email == email);
+
+            return instructor;
+        }
     }
 }

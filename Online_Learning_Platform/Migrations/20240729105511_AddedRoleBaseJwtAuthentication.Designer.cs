@@ -12,8 +12,8 @@ using Online_Learning_Platform.AllDbContext;
 namespace Online_Learning_Platform.Migrations
 {
     [DbContext(typeof(AllTheDbContext))]
-    [Migration("20240725111244_AddedNewAuth")]
-    partial class AddedNewAuth
+    [Migration("20240729105511_AddedRoleBaseJwtAuthentication")]
+    partial class AddedRoleBaseJwtAuthentication
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -38,6 +38,26 @@ namespace Online_Learning_Platform.Migrations
                     b.HasIndex("UsersUserId");
 
                     b.ToTable("CourseUser");
+                });
+
+            modelBuilder.Entity("Online_Learning_Platform.Model.Admin", b =>
+                {
+                    b.Property<Guid>("AdminId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AdminEmail")
+                        .HasColumnType("text");
+
+                    b.Property<string>("AdminName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("AdminPassword")
+                        .HasColumnType("text");
+
+                    b.HasKey("AdminId");
+
+                    b.ToTable("Admins");
                 });
 
             modelBuilder.Entity("Online_Learning_Platform.Model.Course", b =>

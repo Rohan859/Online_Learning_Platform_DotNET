@@ -182,5 +182,13 @@ namespace Online_Learning_Platform.Service
 
             return instructorList; 
         }
+
+        public Instructor? FindInstructorByEmail(string email)
+        {
+            Instructor? instructor = _instructorRepository
+                .FindInstructorByEmail(email);
+
+            return instructor;
+        }
     }
 }

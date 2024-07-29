@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Online_Learning_Platform.DTOs.ResponseDTO;
 using Online_Learning_Platform.Enums;
@@ -9,9 +10,9 @@ namespace Online_Learning_Platform.Controller
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Admin")]
     public class CourseAnalytics : ControllerBase
     {
-        //private  CourseAnalyticsService _courseAnalyticsService;
         private readonly ICourseAnalyticsService _courseAnalyticsService;
 
 

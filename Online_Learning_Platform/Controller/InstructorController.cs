@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Online_Learning_Platform.DTOs.ResponseDTO;
 using Online_Learning_Platform.DTOs.ResuestDTO;
 using Online_Learning_Platform.Interfaces;
 using Online_Learning_Platform.Model;
 using Online_Learning_Platform.Service;
+using Online_Learning_Platform.ServiceInterfaces;
+using System.Security.Claims;
 
 namespace Online_Learning_Platform.Controller
 {
@@ -14,10 +17,12 @@ namespace Online_Learning_Platform.Controller
     {
         //private readonly InstructorService _instructorService;
         private readonly IInstructorService _instructorService;
-
-        public InstructorController(IInstructorService instructorService)
+        private readonly IJwtService _jwtService;
+        public InstructorController(IInstructorService instructorService,
+            IJwtService jwtService)
         {
             _instructorService = instructorService;
+            _jwtService = jwtService;
         }
 
         private ResponseDTO CreateInstructorResponse(string message, string result)
@@ -38,7 +43,17 @@ namespace Online_Learning_Platform.Controller
             {
                 string res = _instructorService.Register(instructor);
 
-                var response = CreateInstructorResponse("Successfully Registered", res);
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Email, instructor.Email!),
+                    new Claim(ClaimTypes.Role,"Tutor")
+
+                };
+
+                //generate token
+                var token = _jwtService.GenerateToken(claims);
+
+                var response = CreateInstructorResponse($"Successfully Registered the instructor and the token is {token}", res);
 
                 return Ok(response);
             }
@@ -51,6 +66,7 @@ namespace Online_Learning_Platform.Controller
 
 
         [HttpPut("/updateInstructor")]
+        [Authorize(Roles = "Tutor")]
         public ActionResult<ResponseDTO> updateInstructor([FromBody]InstructorUpdateRequestDTO instructorUpdateRequestDTO)
         {
             try
@@ -69,6 +85,7 @@ namespace Online_Learning_Platform.Controller
 
 
         [HttpDelete("/deleteInstructor")]
+        [Authorize(Roles = "Admin")]
         public ActionResult<ResponseDTO> DeleteInstructor([FromQuery]Guid id)
         {
             try
@@ -88,6 +105,7 @@ namespace Online_Learning_Platform.Controller
 
 
         [HttpPost("/assignInstructorByCourseId")]
+        [Authorize(Roles = "Admin")]
         public ActionResult<ResponseDTO> AssignInstructor([FromQuery]Guid instructorId,[FromQuery]Guid courseId)
         {
             try
@@ -106,6 +124,7 @@ namespace Online_Learning_Platform.Controller
 
 
         [HttpGet("/noOfInstructorsByCourseId")]
+        [Authorize(Roles = "Admin")]
         public ActionResult<ResponseDTO> GetCountOfInstructorByCourseId([FromQuery]Guid courseId)
         {
             try
@@ -125,6 +144,7 @@ namespace Online_Learning_Platform.Controller
         }
 
         [HttpGet("/getListOfInstructorsByCourseId")]
+        [Authorize(Roles = "Admin")]
         public ActionResult<InstructorListResponseDTO> GetListOfInstructorsByCourseId([FromQuery] Guid courseId)
         {
             try
@@ -146,6 +166,34 @@ namespace Online_Learning_Platform.Controller
             }
         }
 
-        
+        [HttpPost("/instructorLogin")]
+        public IActionResult InstructorLogin([FromBody] LoginRequestDTO loginRequestDTO)
+        {
+            Instructor instructor = _instructorService
+                .FindInstructorByEmail(loginRequestDTO.Email)!;
+
+            if (instructor == null)
+            {
+                return Unauthorized("Wrong credential");
+            }
+
+            if (instructor.Password != loginRequestDTO.Password)
+            {
+                return Unauthorized("Wrong credential");
+            }
+
+            //make claims
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Email, loginRequestDTO.Email),
+                new Claim(ClaimTypes.Role,"Tutor")
+
+            };
+
+            //generate token
+            var token = _jwtService.GenerateToken(claims);
+
+            return Ok(new { token = token });
+        }
     }
 }

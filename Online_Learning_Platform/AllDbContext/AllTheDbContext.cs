@@ -17,7 +17,8 @@ namespace Online_Learning_Platform.AllDbContext
         public DbSet<Enrollment> Enrollments { get; set; }
         public DbSet<Instructor> Instructors { get; set; }
         public DbSet<Review> Reviews { get; set; }
-        //public DbSet<StudentCourse> StudentCourses { get; set; }
+        public DbSet<Admin> Admins { get; set; }
+       
 
 
 
@@ -32,6 +33,7 @@ namespace Online_Learning_Platform.AllDbContext
             modelBuilder.ApplyConfiguration(new EnrollmentConfiguration());
             modelBuilder.ApplyConfiguration(new InstructorConfiguration());
             modelBuilder.ApplyConfiguration(new ReviewConfiguration());
+            modelBuilder.ApplyConfiguration(new AdminConfiguration());
 
 
         }

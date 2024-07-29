@@ -18,7 +18,6 @@ namespace Online_Learning_Platform.Controller
 
     [Route("api/[controller]")]
     [ApiController]
-    
     public class UserController : ControllerBase
     {
         //private readonly UserService _userService;
@@ -34,7 +33,6 @@ namespace Online_Learning_Platform.Controller
 
 
         [HttpGet("/")]
-        [Authorize]
         public ActionResult<string> Reply()
         {
            return Ok("Welcome to Online Learning Platform");
@@ -53,14 +51,24 @@ namespace Online_Learning_Platform.Controller
         
 
         [HttpPost("/userRegister")]
-        [AllowAnonymous]
         public ActionResult<ResponseDTO> Register([FromBody]UserRegistrationRequestDTO userRegistrationRequestDTO)
         {
             try
             {
                 string res = _userService.Register(userRegistrationRequestDTO);
+                
+                //make claims
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Email, userRegistrationRequestDTO.Email!),
+                    new Claim(ClaimTypes.Role,"User")
 
-                var response = CreateUserResponse("Registration Successful",res);
+                };
+
+                //generate token
+                var token = _jwtService.GenerateToken(claims);
+
+                var response = CreateUserResponse("Registration Successful",res+$" and the token is {token}");
                 
                 return Ok(response);
             }
@@ -74,6 +82,7 @@ namespace Online_Learning_Platform.Controller
 
 
         [HttpDelete("/deleteUser")]
+        [Authorize(Roles = "Admin")]
         public ActionResult<ResponseDTO> DeleteUserById([FromQuery] Guid userId) 
         {
             try
@@ -93,6 +102,7 @@ namespace Online_Learning_Platform.Controller
         }
 
         [HttpPut("/updateUser")]
+        [Authorize(Roles = "User")]
         public ActionResult<ResponseDTO> UpdateUserProfile([FromBody]UserProfileUpdateRequestDTO userProfileUpdateRequestDTO)
         {
             try
@@ -113,6 +123,7 @@ namespace Online_Learning_Platform.Controller
 
 
         [HttpGet("/getCourseListByUser")]
+        [Authorize(Roles = "Admin,User")]
         public ActionResult<List<Course>> GetCourseListForUserById([FromQuery]Guid userId)
         {
             try
@@ -135,6 +146,7 @@ namespace Online_Learning_Platform.Controller
         }
 
         [HttpGet("/countEnrollCoursesByUserId")]
+        [Authorize(Roles = "User")]
         public ActionResult<ResponseDTO> CountEnrollCoursesByUserId([FromQuery]Guid userId)
         {
             try
@@ -156,6 +168,7 @@ namespace Online_Learning_Platform.Controller
         }
 
         [HttpGet("/getNoOfReviewsByUserId")]
+        [Authorize(Roles = "User")]
         public ActionResult<ResponseDTO> GetNoOfReviewsByUserId([FromQuery] Guid userId)
         {
             try
@@ -177,7 +190,7 @@ namespace Online_Learning_Platform.Controller
 
 
         [HttpGet("/getUserById")]
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public ActionResult<User> FindUserById([FromQuery]Guid userId)
         {
             try
@@ -192,7 +205,7 @@ namespace Online_Learning_Platform.Controller
         }
 
 
-        [HttpPost("/login")]
+        [HttpPost("/userLogin")]
         [AllowAnonymous]
         public IActionResult Login([FromBody] LoginRequestDTO loginRequestDTO)
         {
@@ -211,7 +224,9 @@ namespace Online_Learning_Platform.Controller
             //make claims
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Email, loginRequestDTO.Email)         
+                new Claim(ClaimTypes.Email, loginRequestDTO.Email),
+                new Claim(ClaimTypes.Role,"User")
+               
             };
 
             //generate token

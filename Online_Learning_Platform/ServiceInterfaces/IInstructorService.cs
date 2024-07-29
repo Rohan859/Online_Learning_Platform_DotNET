@@ -11,6 +11,6 @@ namespace Online_Learning_Platform.Interfaces
         public string AssignInstructor(Guid instructorId, Guid courseId);
         public int GetCountOfInstructorByCourseId(Guid courseId);
         public List<Instructor> GetListOfInstructorsByCourseId(Guid courseId);
-       
+        public Instructor? FindInstructorByEmail(string email);
     }
 }

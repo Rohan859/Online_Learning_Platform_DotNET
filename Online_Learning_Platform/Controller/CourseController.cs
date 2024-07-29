@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Online_Learning_Platform.DTOs.ResponseDTO;
@@ -6,19 +7,25 @@ using Online_Learning_Platform.DTOs.ResuestDTO;
 using Online_Learning_Platform.Interfaces;
 using Online_Learning_Platform.Model;
 using Online_Learning_Platform.Service;
+using Online_Learning_Platform.ServiceInterfaces;
+using System.Security.Claims;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Online_Learning_Platform.Controller
 {
     [Route("api/[controller]")]
     [ApiController]
+   
     public class CourseController : ControllerBase
     {
        // private CourseService _courseService;
        private readonly ICourseService _courseService;
-        public CourseController(ICourseService courseService)
+        private readonly IJwtService _jwtService;
+        public CourseController(ICourseService courseService,
+            IJwtService jwtService)
         {
             _courseService = courseService;
+            _jwtService = jwtService;
         }
 
 
@@ -35,6 +42,7 @@ namespace Online_Learning_Platform.Controller
 
 
         [HttpPost("/addNewCourse")]
+        [Authorize(Roles = "Admin")]
         public ActionResult<ResponseDTO> AddNewCourse([FromBody]Course course)
         {         
             try
@@ -54,6 +62,7 @@ namespace Online_Learning_Platform.Controller
 
 
         [HttpGet("/getAllAvailableCourses")]
+        [Authorize(Roles = "Admin,User")]
         public ActionResult<CourseListResponseDTO> GetAllCourses()
         {
             var courseList = _courseService.GetAllCourses();
@@ -68,6 +77,8 @@ namespace Online_Learning_Platform.Controller
         }
 
         [HttpGet("/getCourseById")]
+        [Authorize(Roles = "Admin,User")]
+
         public ActionResult<CourseResponseDTO> GetCourseByCourseId([FromQuery]Guid courseId)
         {
             try
@@ -90,6 +101,7 @@ namespace Online_Learning_Platform.Controller
 
 
         [HttpDelete("/deleteCourseById")]
+        [Authorize(Roles = "Admin")]
         public ActionResult RemoveCourseById([FromQuery]Guid courseId)
         {
 
@@ -112,6 +124,7 @@ namespace Online_Learning_Platform.Controller
 
 
         [HttpPut("/updateCourse")]
+        [Authorize(Roles = "Admin")]
         public ActionResult<ResponseDTO> UpdateCourseDetails([FromBody]CourseDetailsUpdateDTO courseDetails)
         {
             try
@@ -132,6 +145,7 @@ namespace Online_Learning_Platform.Controller
 
 
         [HttpGet("/getNoOfReviewsByCourseId")]
+        [Authorize(Roles = "Admin")]
         public ActionResult<ResponseDTO> GetNoOfReviewsByCourseId([FromQuery]Guid courseId)
         {
            try
@@ -152,6 +166,7 @@ namespace Online_Learning_Platform.Controller
         }
 
         [HttpGet("/getNoOfEnrollmentsByCourseId")]
+        [Authorize(Roles = "Admin")]
         public ActionResult<ResponseDTO> GetNoOfEnrollmentsByCourseId([FromQuery]Guid courseId)
         {
             try
@@ -177,6 +192,7 @@ namespace Online_Learning_Platform.Controller
         }
 
         [HttpGet("/getListOfUserNameEnrolledByCourseId")]
+        [Authorize(Roles = "Admin")]
         public ActionResult<FetchEnrollmentDTO> GetAllEnrollmentsByCourseId([FromQuery] Guid courseId)
         {      
             try
@@ -198,5 +214,8 @@ namespace Online_Learning_Platform.Controller
             }
            
         }
+
+
+      
     }
 }

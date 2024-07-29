@@ -24,5 +24,6 @@ namespace Online_Learning_Platform.Model
         public List<Enrollment> Enrollments { get; set; }=new List<Enrollment>();
 
         public List<User> Users {  get; set; }=new List<User>();
+        public string Role { get; } = "Admin";
     }
 }

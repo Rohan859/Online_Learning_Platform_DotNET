@@ -37,6 +37,26 @@ namespace Online_Learning_Platform.Migrations
                     b.ToTable("CourseUser");
                 });
 
+            modelBuilder.Entity("Online_Learning_Platform.Model.Admin", b =>
+                {
+                    b.Property<Guid>("AdminId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AdminEmail")
+                        .HasColumnType("text");
+
+                    b.Property<string>("AdminName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("AdminPassword")
+                        .HasColumnType("text");
+
+                    b.HasKey("AdminId");
+
+                    b.ToTable("Admins");
+                });
+
             modelBuilder.Entity("Online_Learning_Platform.Model.Course", b =>
                 {
                     b.Property<Guid>("CourseId")
