@@ -1,4 +1,5 @@
-﻿using Online_Learning_Platform.Interfaces;
+﻿using Online_Learning_Platform.Filter;
+using Online_Learning_Platform.Interfaces;
 using Online_Learning_Platform.Service;
 using Online_Learning_Platform.ServiceInterfaces;
 
@@ -15,8 +16,16 @@ namespace Online_Learning_Platform.Extension
             services.AddScoped<IEnrollmentService, EnrollmentService>();
             services.AddScoped<ICourseAnalyticsService, CourseAnalyticsService>();
             services.AddScoped<IReviewService, ReviewService>();
-            services.AddScoped<IJwtService, JwtService>();
-            services.AddScoped<IAdminService, AdminService>();
+            services.AddSingleton<IJwtService, JwtService>();
+            services.AddSingleton<IAdminService, AdminService>();
+
+
+            services.AddSingleton<ISingleton,Singleton>();
+            services.AddScoped<IScoped,Scope>();
+            services.AddTransient<ITransient,Transient>();
+
+
+           
         }
     }
 }

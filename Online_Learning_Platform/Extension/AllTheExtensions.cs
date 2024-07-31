@@ -13,6 +13,7 @@
             services.AddCustomCors();
             services.AddCustomCacheMemory();
             services.AddJwtBearer(configuration);
+            services.AddController();
         }
     }
 }

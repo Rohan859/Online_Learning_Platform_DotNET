@@ -37,7 +37,7 @@ namespace Online_Learning_Platform.Extension
                 options.AddPolicy("AdminPolicy", policy =>
                     policy.RequireRole("Admin"));
 
-                options.AddPolicy("AdminPolicy", policy =>
+                options.AddPolicy("TutorPolicy", policy =>
                    policy.RequireRole("Tutor"));
             });
         }

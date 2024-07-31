@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Online_Learning_Platform.DTOs.ResuestDTO;
 using Online_Learning_Platform.Model;
@@ -29,7 +30,7 @@ namespace Online_Learning_Platform.Controller
             return Ok(new {success = res});
         }
 
-
+        
         [HttpPost("/adminLogin")]
         public IActionResult AdminLogin([FromBody] LoginRequestDTO loginRequestDTO)
         {

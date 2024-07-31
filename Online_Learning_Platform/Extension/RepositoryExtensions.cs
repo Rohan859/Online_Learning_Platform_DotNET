@@ -13,7 +13,7 @@ namespace Online_Learning_Platform.Extension
             services.AddScoped<ICourseRepository, CourseRepository>();
             services.AddScoped<IInstructorRepository, InstructorRepository>();
             services.AddScoped<IReviewRepository, ReviewRepository>();
-            services.AddScoped<IAdminRepository, AdminRepository>();
+            services.AddSingleton<IAdminRepository, AdminRepository>();
         }
     }
 }
