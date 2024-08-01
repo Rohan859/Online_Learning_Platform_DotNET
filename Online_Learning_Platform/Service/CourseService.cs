@@ -190,6 +190,7 @@ namespace Online_Learning_Platform.Service
 
             _mapper.Map(courseDetailsUpdateDto, course);
 
+            _courseRepository.UpdateCourse(course);
             _courseRepository.Save();
 
             return "Courser details updated successfully";

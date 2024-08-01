@@ -117,6 +117,7 @@ namespace Online_Learning_Platform.Service
             _mapper.Map(userProfileUpdateRequestDTO, user);
 
             //_theDbContext.Users.Update(user);
+            _userRepository.UpdateUser(user);
             _userRepository.Save();
 
             return "User details got successfully updated";

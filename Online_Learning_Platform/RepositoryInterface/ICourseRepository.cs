@@ -16,5 +16,6 @@ namespace Online_Learning_Platform.RepositoryInterface
         public Course? FindCourseByIdAndIncludeEnrollments(Guid courseId);
         public Course? FindCourseByIdAndIncludeEnrollmentsAndIncludeUserFromEnrollmentTable(Guid courseId);
         public void LoadEnrollmentsFromCourse(Course course);
+        public void UpdateCourse(Course course);
     }
 }

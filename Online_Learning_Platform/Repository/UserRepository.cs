@@ -140,5 +140,10 @@ namespace Online_Learning_Platform.Repository
 
             return user;
         }
+
+        public void UpdateUser(User user)
+        {
+            _dbContext.Users.Update(user);
+        }
     }
 }

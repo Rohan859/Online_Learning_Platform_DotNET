@@ -10,7 +10,7 @@ namespace Online_Learning_Platform.Controller
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin")]
+   // [Authorize(Roles = "Admin")]
     public class CourseAnalytics : ControllerBase
     {
         private readonly ICourseAnalyticsService _courseAnalyticsService;

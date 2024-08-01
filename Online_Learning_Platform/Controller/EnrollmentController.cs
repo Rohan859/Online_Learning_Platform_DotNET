@@ -34,7 +34,7 @@ namespace Online_Learning_Platform.Controller
 
 
         [HttpPost("/enroll")]
-        [Authorize(Roles = "User")]
+        //[Authorize(Roles = "User")]
         public ActionResult<ResponseDTO> EnrollInACourse(
             [FromQuery]Guid userId, 
             [FromQuery]Guid courseId,
@@ -56,7 +56,7 @@ namespace Online_Learning_Platform.Controller
         }
 
         [HttpDelete("/unenroll")]
-        [Authorize(Roles = "Admin")]
+       // [Authorize(Roles = "Admin")]
         public ActionResult<string> UnEnroll([FromQuery]Guid enrollmentId)
         {
             try

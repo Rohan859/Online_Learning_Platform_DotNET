@@ -7,6 +7,6 @@ namespace Online_Learning_Platform.ServiceInterfaces
     {
         public string RegisterAdmin(AdminRegisterRequestDTO adminRegisterRequestDTO);
         public Admin? FindAdminByEmail(string email);
-
+        public string DeleteAdminById(Guid adminId);
     }
 }

@@ -10,7 +10,7 @@ namespace Online_Learning_Platform.Controller
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "User")]
+   // [Authorize(Roles = "User")]
     public class ReviewController : ControllerBase
     {
         private readonly IReviewService _reviewService;

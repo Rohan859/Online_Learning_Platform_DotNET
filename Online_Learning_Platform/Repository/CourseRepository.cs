@@ -167,5 +167,10 @@ namespace Online_Learning_Platform.Repository
         {
             _dbContext.Courses.Add(course);
         }
+
+        public void UpdateCourse(Course course)
+        {
+            _dbContext.Courses.Update(course);
+        }
     }
 }

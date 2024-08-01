@@ -82,7 +82,7 @@ namespace Online_Learning_Platform.Controller
 
 
         [HttpDelete("/deleteUser")]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public ActionResult<ResponseDTO> DeleteUserById([FromQuery] Guid userId) 
         {
             try
@@ -102,7 +102,7 @@ namespace Online_Learning_Platform.Controller
         }
 
         [HttpPut("/updateUser")]
-        [Authorize(Roles = "User")]
+        //[Authorize(Roles = "User")]
         public ActionResult<ResponseDTO> UpdateUserProfile([FromBody]UserProfileUpdateRequestDTO userProfileUpdateRequestDTO)
         {
             try
@@ -123,7 +123,7 @@ namespace Online_Learning_Platform.Controller
 
 
         [HttpGet("/getCourseListByUser")]
-        [Authorize(Roles = "Admin,User")]
+       // [Authorize(Roles = "Admin,User")]
         public ActionResult<List<Course>> GetCourseListForUserById([FromQuery]Guid userId)
         {
             try
@@ -146,7 +146,7 @@ namespace Online_Learning_Platform.Controller
         }
 
         [HttpGet("/countEnrollCoursesByUserId")]
-        [Authorize(Roles = "User")]
+       // [Authorize(Roles = "User")]
         public ActionResult<ResponseDTO> CountEnrollCoursesByUserId([FromQuery]Guid userId)
         {
             try
@@ -168,7 +168,7 @@ namespace Online_Learning_Platform.Controller
         }
 
         [HttpGet("/getNoOfReviewsByUserId")]
-        [Authorize(Roles = "User")]
+       // [Authorize(Roles = "User")]
         public ActionResult<ResponseDTO> GetNoOfReviewsByUserId([FromQuery] Guid userId)
         {
             try
@@ -190,7 +190,7 @@ namespace Online_Learning_Platform.Controller
 
 
         [HttpGet("/getUserById")]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public ActionResult<User> FindUserById([FromQuery]Guid userId)
         {
             try
@@ -206,7 +206,7 @@ namespace Online_Learning_Platform.Controller
 
 
         [HttpPost("/userLogin")]
-        [AllowAnonymous]
+        //[AllowAnonymous]
         public IActionResult Login([FromBody] LoginRequestDTO loginRequestDTO)
         {
             User user = _userService.IsUserExistByEmail(loginRequestDTO.Email)!;

@@ -33,5 +33,16 @@ namespace Online_Learning_Platform.Service
 
             return admin;
         }
+
+        public string DeleteAdminById(Guid adminId)
+        {
+            string res = _adminRepository.DeleteAdminById(adminId);
+
+            if(res == "Admin does not exist")
+            {
+                throw new Exception(res);
+            }
+            return res;
+        }
     }
 }

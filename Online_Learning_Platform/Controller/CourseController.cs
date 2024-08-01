@@ -42,7 +42,7 @@ namespace Online_Learning_Platform.Controller
 
 
         [HttpPost("/addNewCourse")]
-        [Authorize(Roles = "Admin")]
+      //  [Authorize(Roles = "Admin")]
         public ActionResult<ResponseDTO> AddNewCourse([FromBody]Course course)
         {         
             try
@@ -62,7 +62,7 @@ namespace Online_Learning_Platform.Controller
 
 
         [HttpGet("/getAllAvailableCourses")]
-        [Authorize(Roles = "Admin,User")]
+      //  [Authorize(Roles = "Admin,User")]
         public ActionResult<CourseListResponseDTO> GetAllCourses()
         {
             var courseList = _courseService.GetAllCourses();
@@ -77,7 +77,7 @@ namespace Online_Learning_Platform.Controller
         }
 
         [HttpGet("/getCourseById")]
-        [Authorize(Roles = "Admin,User")]
+      //  [Authorize(Roles = "Admin,User")]
 
         public ActionResult<CourseResponseDTO> GetCourseByCourseId([FromQuery]Guid courseId)
         {
@@ -101,7 +101,7 @@ namespace Online_Learning_Platform.Controller
 
 
         [HttpDelete("/deleteCourseById")]
-        [Authorize(Roles = "Admin")]
+      //  [Authorize(Roles = "Admin")]
         public ActionResult RemoveCourseById([FromQuery]Guid courseId)
         {
 
@@ -124,7 +124,7 @@ namespace Online_Learning_Platform.Controller
 
 
         [HttpPut("/updateCourse")]
-        [Authorize(Roles = "Admin")]
+      //  [Authorize(Roles = "Admin")]
         public ActionResult<ResponseDTO> UpdateCourseDetails([FromBody]CourseDetailsUpdateDTO courseDetails)
         {
             try
@@ -145,7 +145,7 @@ namespace Online_Learning_Platform.Controller
 
 
         [HttpGet("/getNoOfReviewsByCourseId")]
-        [Authorize(Roles = "Admin")]
+       // [Authorize(Roles = "Admin")]
         public ActionResult<ResponseDTO> GetNoOfReviewsByCourseId([FromQuery]Guid courseId)
         {
            try
@@ -166,7 +166,7 @@ namespace Online_Learning_Platform.Controller
         }
 
         [HttpGet("/getNoOfEnrollmentsByCourseId")]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public ActionResult<ResponseDTO> GetNoOfEnrollmentsByCourseId([FromQuery]Guid courseId)
         {
             try
@@ -192,7 +192,7 @@ namespace Online_Learning_Platform.Controller
         }
 
         [HttpGet("/getListOfUserNameEnrolledByCourseId")]
-        [Authorize(Roles = "Admin")]
+       // [Authorize(Roles = "Admin")]
         public ActionResult<FetchEnrollmentDTO> GetAllEnrollmentsByCourseId([FromQuery] Guid courseId)
         {      
             try

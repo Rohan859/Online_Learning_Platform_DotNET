@@ -13,5 +13,6 @@ namespace Online_Learning_Platform.RepositoryInterface
         public User FindUserByIdIncludeEnrollmentsAndCourses(Guid userId);
         public User FindUserByIdIncludeReviews(Guid userId);
         public User? FindUserByEmail(string email);
+        public void UpdateUser(User user);
     }
 }

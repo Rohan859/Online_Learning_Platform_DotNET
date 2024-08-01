@@ -7,5 +7,7 @@ namespace Online_Learning_Platform.RepositoryInterface
         public void AddToAdminDb(Admin admin);
         public void Save();
         public Admin? FindAdminByEmail(string email);
+        public string DeleteAdminById(Guid adminId);
+        public Admin FindAdminById(Guid adminId);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Online_Learning_Platform.DTOs.ResponseDTO;
 using Online_Learning_Platform.DTOs.ResuestDTO;
 using Online_Learning_Platform.Model;
 using Online_Learning_Platform.Service;
@@ -11,6 +12,7 @@ namespace Online_Learning_Platform.Controller
 {
     [Route("api/[controller]")]
     [ApiController]
+    [AllowAnonymous]
     public class AdminController : ControllerBase
     {
         private readonly IAdminService _adminService;
@@ -27,7 +29,17 @@ namespace Online_Learning_Platform.Controller
         {
             string res = _adminService.RegisterAdmin(adminRegisterRequestDTO);
 
-            return Ok(new {success = res});
+            //make claims
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Email, adminRegisterRequestDTO.AdminEmail!),
+                new Claim(ClaimTypes.Role,"Admin")
+
+            };
+
+            //generate token
+            var token = _jwtService.GenerateToken(claims);
+            return Ok(new {success = $"{res} and your token is {token}"});
         }
 
         
@@ -58,6 +70,33 @@ namespace Online_Learning_Platform.Controller
             var token = _jwtService.GenerateToken(claims);
 
             return Ok(new { token = token });
+        }
+
+        [HttpDelete("/deleteAdminById")]
+       // [Authorize(Roles = "Admin")]
+        public ActionResult<ResponseDTO> DeleteAdminById([FromQuery]Guid adminId)
+        {
+            try
+            {
+                string res = _adminService.DeleteAdminById(adminId);
+
+                var response = new ResponseDTO
+                {
+                    Message = "Delete Successful",
+                    Result = res
+                };
+
+                return Ok(response);
+            }
+            catch (Exception e)
+            {
+                var response = new ResponseDTO
+                {
+                    Message = "Error",
+                    Result = e.Message
+                };
+                return NotFound(response);
+            }
         }
 
     }

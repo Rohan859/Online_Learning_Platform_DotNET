@@ -26,6 +26,7 @@ namespace Online_Learning_Platform.Repository
         {
             var _allTheDbContext = CreateDbContext();
             _allTheDbContext.Admins.Add(admin);
+            _allTheDbContext.SaveChanges();
         }
 
         public void Save()
@@ -42,6 +43,30 @@ namespace Online_Learning_Platform.Repository
                 .FirstOrDefault(u => u.AdminEmail == email);
 
             return admin;
+        }
+        public Admin? FindAdminById(Guid adminId)
+        {
+            var _allTheDbContext = CreateDbContext();
+
+            Admin? admin = _allTheDbContext.Admins
+                .FirstOrDefault(x => x.AdminId == adminId);
+
+            return admin;
+        }
+        public string DeleteAdminById(Guid adminId)
+        {
+            var _allTheDbContext = CreateDbContext();
+
+            Admin? admin = FindAdminById(adminId);
+
+            if(admin != null)
+            {
+                _allTheDbContext.Admins.Remove(admin);
+                _allTheDbContext.SaveChanges();
+                return "Admin is deleted successfully";
+            }
+
+            return "Admin does not exist";
         }
     }
 }
