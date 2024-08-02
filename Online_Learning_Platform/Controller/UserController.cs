@@ -234,5 +234,12 @@ namespace Online_Learning_Platform.Controller
 
             return Ok(new {token = token });
         }
+
+
+        [HttpGet("/jwtIdAsSingleton")]
+        public int GetId()
+        {
+            return _jwtService.GetId();
+        }
     }
 }

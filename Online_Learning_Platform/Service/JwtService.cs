@@ -37,5 +37,10 @@ namespace Online_Learning_Platform.Service
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
+        public int GetId()
+        {
+            return this.GetHashCode();
+        }
     }
 }

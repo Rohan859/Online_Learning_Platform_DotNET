@@ -11,21 +11,35 @@ namespace Online_Learning_Platform.Filter
         {
             var path = context.HttpContext.Request.Path;
 
-            if(path=="/" 
-                || path == "/adminLogin" 
+            if (path == "/"
+                || path == "/adminLogin"
                 || path == "/signUpAdmin"
                 || path == "/userRegister"
                 || path == "/userLogin"
                 || path == "/userLogin"
                 || path == "/instructorRegister"
-                || path == "/instructorLogin")
+                || path == "/instructorLogin"
+                || path == "/reflect"
+                || path == "/singleton"
+                || path == "/jwtIdAsSingleton"
+                || path == "/getIdAsSingletonFromAdminService")
             {
                 return;
             }
 
+            var authHeader = context.HttpContext.Request.Headers["Authorization"];
+
+            if (string.IsNullOrEmpty(authHeader) || authHeader == "No Auth")
+            {
+                context.Result = new UnauthorizedResult();
+                return;
+            }
+
+
             if(!context.HttpContext.User.Identity!.IsAuthenticated)
             {
                 context.Result = new UnauthorizedResult();
+                return;
             }
 
 
@@ -34,6 +48,8 @@ namespace Online_Learning_Platform.Filter
                 //for Admin Controller
                 {"/deleteAdminById", new[]{"Admin"} },
                
+
+
                 //for User Controller
                 {"/deleteUser", new[]{"Admin"} },
                 {"/updateUser", new[]{"User"} },
@@ -41,6 +57,7 @@ namespace Online_Learning_Platform.Filter
                 {"/countEnrollCoursesByUserId", new[]{"User"} },
                 {"/getNoOfReviewsByUserId", new[]{"User"} },
                 {"/getUserById", new[]{"Admin"} },
+
 
 
                 //for Course Controller

@@ -9,9 +9,11 @@ namespace Online_Learning_Platform.Service
         public Singleton()
         {
             _id = Guid.NewGuid();
+            Console.WriteLine(this.GetHashCode());
         }
         public Guid GetId()
         {
+            Console.WriteLine(this.GetHashCode());
             return _id;
         }
     }

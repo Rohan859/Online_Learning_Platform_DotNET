@@ -16,6 +16,7 @@ namespace Online_Learning_Platform.Extension
             services.AddScoped<IEnrollmentService, EnrollmentService>();
             services.AddScoped<ICourseAnalyticsService, CourseAnalyticsService>();
             services.AddScoped<IReviewService, ReviewService>();
+
             services.AddSingleton<IJwtService, JwtService>();
             services.AddSingleton<IAdminService, AdminService>();
 

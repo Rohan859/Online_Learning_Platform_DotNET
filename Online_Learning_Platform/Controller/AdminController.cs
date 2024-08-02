@@ -12,7 +12,6 @@ namespace Online_Learning_Platform.Controller
 {
     [Route("api/[controller]")]
     [ApiController]
-    [AllowAnonymous]
     public class AdminController : ControllerBase
     {
         private readonly IAdminService _adminService;
@@ -97,6 +96,13 @@ namespace Online_Learning_Platform.Controller
                 };
                 return NotFound(response);
             }
+        }
+
+
+        [HttpGet("/getIdAsSingletonFromAdminService")]
+        public int GetId()
+        {
+            return _adminService.GetId();
         }
 
     }

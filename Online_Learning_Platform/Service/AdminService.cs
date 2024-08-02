@@ -9,10 +9,22 @@ namespace Online_Learning_Platform.Service
     public class AdminService : IAdminService
     {
         private readonly IAdminRepository _adminRepository;
-
-        public AdminService(IAdminRepository adminRepository)
+        private readonly IServiceProvider _serviceProvider;
+        
+        public AdminService(IAdminRepository adminRepository,
+            IServiceProvider serviceProvider)
         {
-            _adminRepository = adminRepository;
+            if(serviceProvider.GetRequiredService<IAdminRepository>()!=null)
+            {
+                _adminRepository = serviceProvider.GetRequiredService<IAdminRepository>();
+                
+            }
+            else
+            {
+                _adminRepository = adminRepository;
+            }
+            
+            
         }
         public string RegisterAdmin(AdminRegisterRequestDTO adminRegisterRequestDTO)
         {
@@ -43,6 +55,11 @@ namespace Online_Learning_Platform.Service
                 throw new Exception(res);
             }
             return res;
+        }
+
+        public int GetId()
+        {
+            return this.GetHashCode();
         }
     }
 }
