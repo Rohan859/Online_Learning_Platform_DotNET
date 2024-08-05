@@ -5,12 +5,14 @@ using Online_Learning_Platform.DTOs.ResponseDTO;
 using Online_Learning_Platform.Enums;
 using Online_Learning_Platform.Interfaces;
 using Online_Learning_Platform.Service;
+using Online_Learning_Platform.Filter;
 
 namespace Online_Learning_Platform.Controller
 {
     [Route("api/[controller]")]
     [ApiController]
-   // [Authorize(Roles = "Admin")]
+    // [Authorize(Roles = "Admin")]
+    [AuthorizationFilter]
     public class CourseAnalytics : ControllerBase
     {
         private readonly ICourseAnalyticsService _courseAnalyticsService;

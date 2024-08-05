@@ -10,12 +10,14 @@ using Online_Learning_Platform.Service;
 using Online_Learning_Platform.ServiceInterfaces;
 using System.Security.Claims;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using Online_Learning_Platform.Filter;
+
 
 namespace Online_Learning_Platform.Controller
 {
     [Route("api/[controller]")]
     [ApiController]
-   
+    [AuthorizationFilter]
     public class CourseController : ControllerBase
     {
        // private CourseService _courseService;

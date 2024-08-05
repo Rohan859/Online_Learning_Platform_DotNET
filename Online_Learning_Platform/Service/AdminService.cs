@@ -9,22 +9,10 @@ namespace Online_Learning_Platform.Service
     public class AdminService : IAdminService
     {
         private readonly IAdminRepository _adminRepository;
-        private readonly IServiceProvider _serviceProvider;
         
-        public AdminService(IAdminRepository adminRepository,
-            IServiceProvider serviceProvider)
-        {
-            if(serviceProvider.GetRequiredService<IAdminRepository>()!=null)
-            {
-                _adminRepository = serviceProvider.GetRequiredService<IAdminRepository>();
-                
-            }
-            else
-            {
-                _adminRepository = adminRepository;
-            }
-            
-            
+        public AdminService(IAdminRepository adminRepository)
+        {          
+            _adminRepository = adminRepository;
         }
         public string RegisterAdmin(AdminRegisterRequestDTO adminRegisterRequestDTO)
         {

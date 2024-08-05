@@ -7,11 +7,13 @@ using Online_Learning_Platform.Enums;
 using Online_Learning_Platform.Interfaces;
 using Online_Learning_Platform.Model;
 using Online_Learning_Platform.Service;
+using Online_Learning_Platform.Filter;
 
 namespace Online_Learning_Platform.Controller
 {
     [Route("api/[controller]")]
     [ApiController]
+    [AuthorizationFilter]
     public class EnrollmentController : ControllerBase
     {
         //private EnrollmentService _enrollmentService;

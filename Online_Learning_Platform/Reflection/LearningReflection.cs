@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Online_Learning_Platform.Interfaces;
 using Online_Learning_Platform.Model;
 using Online_Learning_Platform.RepositoryInterface;
+using System.Collections.Concurrent;
 using System.Reflection;
 
 namespace Online_Learning_Platform.Reflection
@@ -18,6 +19,7 @@ namespace Online_Learning_Platform.Reflection
             _assembly = Assembly.GetExecutingAssembly();
             //_courseService = courseService;
             _serviceProvider = serviceProvider;
+
         }
         public void InvokeMethod(
             string serviceClassName,
@@ -26,13 +28,14 @@ namespace Online_Learning_Platform.Reflection
         {
             Type type = _assembly.GetType(serviceClassName)!;
 
-            if (type == null)
-            {
+           
+             if (type == null)
+             {
                 throw new Exception($"{serviceClassName} is not found");
-            }
+             }
 
             object? serviceInstance = _serviceProvider.GetService(type);
-            
+
 
             if (serviceInstance == null)
             {
@@ -52,11 +55,6 @@ namespace Online_Learning_Platform.Reflection
                     .ToArray();
 
                 serviceInstance = ctor.Invoke(parameters);
-            }
-
-            if (serviceInstance == null)
-            {
-                throw new Exception("Failed to create instance of service class by dependency injection");
             }
 
             MethodInfo? methodInfo = type.GetMethod(methodName);

@@ -33,10 +33,12 @@ namespace Online_Learning_Platform.Controller
 
 
         [HttpGet("/")]
+        [MyActionFilter]
         public ActionResult<string> Reply()
         {
            return Ok("Welcome to Online Learning Platform");
         }
+
 
         private ResponseDTO CreateUserResponse(string message,string result)
         {
@@ -82,6 +84,7 @@ namespace Online_Learning_Platform.Controller
 
 
         [HttpDelete("/deleteUser")]
+        [AuthorizationFilter]
         //[Authorize(Roles = "Admin")]
         public ActionResult<ResponseDTO> DeleteUserById([FromQuery] Guid userId) 
         {
@@ -102,6 +105,7 @@ namespace Online_Learning_Platform.Controller
         }
 
         [HttpPut("/updateUser")]
+        [AuthorizationFilter]
         //[Authorize(Roles = "User")]
         public ActionResult<ResponseDTO> UpdateUserProfile([FromBody]UserProfileUpdateRequestDTO userProfileUpdateRequestDTO)
         {
@@ -123,7 +127,8 @@ namespace Online_Learning_Platform.Controller
 
 
         [HttpGet("/getCourseListByUser")]
-       // [Authorize(Roles = "Admin,User")]
+        [AuthorizationFilter]
+        // [Authorize(Roles = "Admin,User")]
         public ActionResult<List<Course>> GetCourseListForUserById([FromQuery]Guid userId)
         {
             try
@@ -146,7 +151,8 @@ namespace Online_Learning_Platform.Controller
         }
 
         [HttpGet("/countEnrollCoursesByUserId")]
-       // [Authorize(Roles = "User")]
+        [AuthorizationFilter]
+        // [Authorize(Roles = "User")]
         public ActionResult<ResponseDTO> CountEnrollCoursesByUserId([FromQuery]Guid userId)
         {
             try
@@ -168,7 +174,8 @@ namespace Online_Learning_Platform.Controller
         }
 
         [HttpGet("/getNoOfReviewsByUserId")]
-       // [Authorize(Roles = "User")]
+        [AuthorizationFilter]
+        // [Authorize(Roles = "User")]
         public ActionResult<ResponseDTO> GetNoOfReviewsByUserId([FromQuery] Guid userId)
         {
             try
@@ -190,6 +197,7 @@ namespace Online_Learning_Platform.Controller
 
 
         [HttpGet("/getUserById")]
+        [AuthorizationFilter]
         //[Authorize(Roles = "Admin")]
         public ActionResult<User> FindUserById([FromQuery]Guid userId)
         {

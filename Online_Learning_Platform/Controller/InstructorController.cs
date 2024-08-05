@@ -8,6 +8,7 @@ using Online_Learning_Platform.Model;
 using Online_Learning_Platform.Service;
 using Online_Learning_Platform.ServiceInterfaces;
 using System.Security.Claims;
+using Online_Learning_Platform.Filter;
 
 namespace Online_Learning_Platform.Controller
 {
@@ -66,6 +67,7 @@ namespace Online_Learning_Platform.Controller
 
 
         [HttpPut("/updateInstructor")]
+        [AuthorizationFilter]
        // [Authorize(Roles = "Tutor")]
         public ActionResult<ResponseDTO> updateInstructor([FromBody]InstructorUpdateRequestDTO instructorUpdateRequestDTO)
         {
@@ -85,7 +87,8 @@ namespace Online_Learning_Platform.Controller
 
 
         [HttpDelete("/deleteInstructor")]
-      //  [Authorize(Roles = "Admin")]
+        [AuthorizationFilter]
+        //  [Authorize(Roles = "Admin")]
         public ActionResult<ResponseDTO> DeleteInstructor([FromQuery]Guid id)
         {
             try
@@ -105,7 +108,8 @@ namespace Online_Learning_Platform.Controller
 
 
         [HttpPost("/assignInstructorByCourseId")]
-       // [Authorize(Roles = "Admin")]
+        [AuthorizationFilter]
+        // [Authorize(Roles = "Admin")]
         public ActionResult<ResponseDTO> AssignInstructor([FromQuery]Guid instructorId,[FromQuery]Guid courseId)
         {
             try
@@ -124,7 +128,8 @@ namespace Online_Learning_Platform.Controller
 
 
         [HttpGet("/noOfInstructorsByCourseId")]
-       // [Authorize(Roles = "Admin")]
+        [AuthorizationFilter]
+        // [Authorize(Roles = "Admin")]
         public ActionResult<ResponseDTO> GetCountOfInstructorByCourseId([FromQuery]Guid courseId)
         {
             try
@@ -144,7 +149,8 @@ namespace Online_Learning_Platform.Controller
         }
 
         [HttpGet("/getListOfInstructorsByCourseId")]
-      //  [Authorize(Roles = "Admin")]
+        [AuthorizationFilter]
+        //  [Authorize(Roles = "Admin")]
         public ActionResult<InstructorListResponseDTO> GetListOfInstructorsByCourseId([FromQuery] Guid courseId)
         {
             try

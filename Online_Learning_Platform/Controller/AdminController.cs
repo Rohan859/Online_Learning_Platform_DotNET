@@ -7,6 +7,7 @@ using Online_Learning_Platform.Model;
 using Online_Learning_Platform.Service;
 using Online_Learning_Platform.ServiceInterfaces;
 using System.Security.Claims;
+using Online_Learning_Platform.Filter;
 
 namespace Online_Learning_Platform.Controller
 {
@@ -72,7 +73,8 @@ namespace Online_Learning_Platform.Controller
         }
 
         [HttpDelete("/deleteAdminById")]
-       // [Authorize(Roles = "Admin")]
+        [AuthorizationFilter]
+        // [Authorize(Roles = "Admin")]
         public ActionResult<ResponseDTO> DeleteAdminById([FromQuery]Guid adminId)
         {
             try

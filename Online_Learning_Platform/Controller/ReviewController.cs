@@ -4,12 +4,14 @@ using Microsoft.AspNetCore.Mvc;
 using Online_Learning_Platform.DTOs.ResponseDTO;
 using Online_Learning_Platform.DTOs.ResuestDTO;
 using Online_Learning_Platform.Interfaces;
+using Online_Learning_Platform.Filter;
 using Online_Learning_Platform.Service;
 
 namespace Online_Learning_Platform.Controller
 {
     [Route("api/[controller]")]
     [ApiController]
+    [AuthorizationFilter]
    // [Authorize(Roles = "User")]
     public class ReviewController : ControllerBase
     {
@@ -34,6 +36,7 @@ namespace Online_Learning_Platform.Controller
 
 
         [HttpPost("/submitReview")]
+        
         public ActionResult<ResponseDTO> SubmitReview([FromBody]ReviewRequestDTO reviewRequestDTO)
         {
             try

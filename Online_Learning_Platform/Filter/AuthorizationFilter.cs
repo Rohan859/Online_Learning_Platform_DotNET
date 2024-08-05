@@ -5,45 +5,27 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Online_Learning_Platform.Filter
 {
-    public class AuthorizationFilter : IAuthorizationFilter
+    public class AuthorizationFilter : Attribute,IAuthorizationFilter
     {
-        public void OnAuthorization(AuthorizationFilterContext context)
+        private static readonly HashSet<string> NoAuthPaths = new HashSet<string>
         {
-            var path = context.HttpContext.Request.Path;
-
-            if (path == "/"
-                || path == "/adminLogin"
-                || path == "/signUpAdmin"
-                || path == "/userRegister"
-                || path == "/userLogin"
-                || path == "/userLogin"
-                || path == "/instructorRegister"
-                || path == "/instructorLogin"
-                || path == "/reflect"
-                || path == "/singleton"
-                || path == "/jwtIdAsSingleton"
-                || path == "/getIdAsSingletonFromAdminService")
-            {
-                return;
-            }
-
-            var authHeader = context.HttpContext.Request.Headers["Authorization"];
-
-            if (string.IsNullOrEmpty(authHeader) || authHeader == "No Auth")
-            {
-                context.Result = new UnauthorizedResult();
-                return;
-            }
+         //   "/",
+            "/adminLogin",
+            "/signUpAdmin",
+            "/userRegister",
+            "/userLogin",
+            "/instructorRegister",
+            "/instructorLogin",
+            "/reflect",
+            "/singleton",
+            "/jwtIdAsSingleton",
+            "/getIdAsSingletonFromAdminService",
+            "/fetch",
+            "/hi"
+        };
 
 
-            if(!context.HttpContext.User.Identity!.IsAuthenticated)
-            {
-                context.Result = new UnauthorizedResult();
-                return;
-            }
-
-
-            var requiredRoles = new Dictionary<string, string[]>()
+        private static readonly Dictionary<string, string[]> requiredRoles = new Dictionary<string, string[]>()
             {
                 //for Admin Controller
                 {"/deleteAdminById", new[]{"Admin"} },
@@ -99,6 +81,29 @@ namespace Online_Learning_Platform.Filter
                 {"/countProgress", new[]{ "Admin" } }
 
             };
+        public void OnAuthorization(AuthorizationFilterContext context)
+        {
+            var path = context.HttpContext.Request.Path;
+
+            if (NoAuthPaths.Contains(path))
+            {
+                return;
+            }
+
+            var authHeader = context.HttpContext.Request.Headers["Authorization"];
+
+            if (string.IsNullOrEmpty(authHeader) || authHeader == "No Auth")
+            {
+                context.Result = new UnauthorizedResult();
+                return;
+            }
+
+
+            if(!context.HttpContext.User.Identity!.IsAuthenticated)
+            {
+                context.Result = new UnauthorizedResult();
+                return;
+            }
 
 
             if (requiredRoles.TryGetValue(path, out var roles))

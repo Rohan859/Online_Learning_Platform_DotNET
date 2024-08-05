@@ -11,7 +11,7 @@ namespace Online_Learning_Platform.Extension
                     option =>
                     {
                         option.Filters.Add<ExecutionTimeFilter>(); 
-                        option.Filters.Add<AuthorizationFilter>();
+                        //option.Filters.Add<AuthorizationFilter>();
                     }
                 );
         }
